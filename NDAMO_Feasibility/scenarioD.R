@@ -27,8 +27,8 @@ anamx_NDAMO_AnMBR <- function(V, pH, Temp, cNin, cCODin){
   CH4_COD = 4
   
   ## Methane Production
-  rho_CH4=.65477
-  rho_CH4_STP = 0.717
+  rho_CH4=.65477 # Density at 20 C standard P
+  rho_CH4_STP = 0.717 # Density at STP
   CH4_COD_AnMBR = 350 #LCH4/kgCOD (Grady Biological WWT)
   n_BG=0.95 #Biogas Burning Eff.
   n_Cogen=0.39 #Cogen Efficiency
@@ -50,17 +50,13 @@ anamx_NDAMO_AnMBR <- function(V, pH, Temp, cNin, cCODin){
   #fSolids=0.1    # gVSS/gSludge, fraction of solids in final sludge from plant
   
   
-  
-  ## Nitrogen system
-  fN_AOB=1-0.485; # wt%, fraction of total N in converted by AOB, see appendix
-  fCH4_NDAMO=0.338; # stoich coeff of methane in NDAMO    
-  
   ## AnMBR System
   MixingEnergy=0.15; #kWh/m3, Mixing energy of reactor calculated per reactor volume, Damien Batstone
   HRT_AnMBR=1; #days, Damien Batstone
   MembraneScouringEnergy=0.25; #kWh/kL/d, scouring energy per flowrate, Damien Batstone
   
   # Dissolved Methane
+  # REplace w/ Adam's spreadsheet stuff
   fCH4gas = 0.62 # Assume 62% of biogas is methane
   P=1 # atm, system pressure
   H=0.0015 # Henry's Constant, (Add temperature and pH dependence)
@@ -72,13 +68,18 @@ anamx_NDAMO_AnMBR <- function(V, pH, Temp, cNin, cCODin){
   #C_SludgeTreatment=100; %$/metric ton
   
   ### Calcuations
+  # Influent
   LNin=V*cNin; #kgN/d, Nitrogen load per day
   LNcent=.4*LNin; #kgN/d, Nitrogen load from centrate, assumed 40% of total load
   LN=LNin+LNcent; #kgN/d, total nitrogen load
-  LCOD_inf=V*cCODin; #kgCOD/d, COD load per day
+  LCOD_inf=V*cCODin; #kgCOD/d, COD load per day, assume no COD in centrate
   
   # Nitrogen Removal System
-  fN_NOB = fN_AOB  # wt%, frac of totN converted by NOB, assumed 100% in NDAMO system
+  fN_AOB =((1/(1-0.26/1.32))*(1/1.32)+1)/((1/(1-0.26/1.32))*(1/1.32)+2); # Fraction of N in converted by AOB, see appendix
+  fN_NOB = fN_AOB;  # wt%, frac of N in converted by NOB, 100% of NO2- in goes to NO3-
+  fN_anamx = 1-fN_AOB # wt%, frac of NH4 in converted by anammox,
+  fN_NDAMO = 
+  fCH4_NDAMO=0.338; # stoich coeff of methane in NDAMO 
   O2_AOB = (fN_AOB* LNin)/MW_N * MW_O2 * sO2_AOB # kg/D O2 req'd by AOB
   O2_NOB = (fN_NOB* LNin)/MW_N * MW_O2 * sO2_NOB # kg/D O2 req'd by NOB
   O2_dem = O2_AOB+O2_NOB # Total stoichiometric O2 Demand
