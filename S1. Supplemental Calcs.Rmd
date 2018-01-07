@@ -9,10 +9,9 @@ knitr::opts_chunk$set(echo = FALSE)
 
 These calculations are intended to explain the R scripts used to create the figures **xx-yy**
 
-### Definitions
+### Definitions & Input Parameter
 *Z* represents a constituent (N for total nitrogen, COD for chemical oxygen demand, O2 for ozygen, etc.) and *Y* represents an organism (AOB for ammonium oxidizing bacteria, NOB for nitite oxidizing bacteria, etc.)
 
-#### Input Parameters
 $Q$, Total daily volume into the wastewater treatment plant, million Liters/day 
 
 $C_{Z_{in}}$, Concentration of *Z* in influent, mg/L
@@ -26,12 +25,15 @@ $S_{Z_Y}$, Stoichiometric coefficient of *Z* in metabolism of organism *Y*
 
 $f_{x_Y}$, Sludge production of organism *Y* 
 
-| Organism                    | $S_{Z_{Y}}$           | $f_{x_Y}$           |
-| --------------------------- | --------------------- | ------------------- |
-| Heterotrophic Denitrifiers  | N/A                   | 0.56  gCOD/gCOD     |
-| Ammonium Oxidizing Bacteria | 1.5    mol$O_2$/molN  | 0.20  gCOD/gN       |
-| Nitrite Oxidizing Bacteria  | 1      mol$O_2$/molN  | 0.06  gCOD/gN       |
-| n-DAMO                      | 0.338  mol$CH_4$/molN | 0.22  gCOD/g$CH_4$  |
+| Process                       | $S_{Z_{Y}}$           | $f_{x_Y}$           |
+| ----------------------------- | --------------------- | ------------------- |
+| Heterotrophic Denitrification | 5      gCOD/gN        | 0.56  gCOD/gCOD     |
+| Heterotrophic Oxidation       | 1      g$O_2$/gCOD    | 0.56  gCOD/gCOD     |
+| Ammonium Oxidation            | 1.5    mol$O_2$/molN  | 0.20  gCOD/gN       |
+| Nitrite Oxidation             | 1      mol$O_2$/molN  | 0.06  gCOD/gN       |
+| Anammox Bacteria              | 1.5    mol$O_2$/molN  | 0.20  gCOD/gN       |
+| Anaerobic Membrane            | N/A                   | 0.56  gCOD/gCOD     |
+| n-DAMO                        | 0.338  mol$CH_4$/molN | 0.22  gCOD/g$CH_4$  |
 
 $n=1.4$, gVSS/gCOD, conversion constant **[cite]**
 
@@ -247,3 +249,4 @@ $L_CH4$, The dissolved methane consumed in scenario D.  This will be always be 0
 
 ${CH_{4_{PROD}}}$ The m$^3$ of CH$_4$ produced for energy recovery is in step 4 for each particular scenario above as well.
 
+### References

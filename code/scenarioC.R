@@ -35,21 +35,25 @@ anamx_NDAMO<- function(df){
   # Anaerobic Digester
   temp$px.OUT <- temp$px.TOT * (1-fx_digester)
   temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
-  temp$COD_bal <- (temp$LCH4_cons - temp$CH4prod) / CH4_COD 
-  temp$CH4regen <- -temp$COD_bal 
-  temp$CH4regen[which(temp$CH4regen  < 0)] <- 0
   temp$LCH4 <- rep(0, times=nrow(temp))
   temp$biogasvol <- temp$CH4prod / rho_CH4 / fbiogas_CH4
   temp$CO2vol.digester <- temp$biogasvol * (1 - fbiogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$CO2vol.digester / vol.1molgas * MW_CO2
   
+  # Methane Balance
+  temp$CH4regen <- temp$CH4prod - temp$LCH4_cons # kg Dissolved after NDAMO consume, kg/d
+  temp$COD.added <- 0
+  temp$COD.added[which(temp$CH4regen<0)] <- -temp$CH4regen[which(temp$CH4regen<0)] / CH4_COD  # if need more than produced, get externally
+  temp$CH4regen[which(temp$CH4regen<0)] <- 0 # if need more than produced, prodCH4  = 0
+  temp$CO2.burn <- temp$CH4regen * fCO2_BURN # CO2 from energy regeneration
+  
+  
   df$scenario <- rep('C', times=nrow(temp))
-  df$COD.added<- 0
+  df$COD.added <- temp$COD.added
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
   df$CH4.dissolved <- temp$LCH4
-  df$CH4.produced <- temp$CH4regen
+  df$CH4.toburn <- temp$CH4regen
   df$CO2.equivs  <- rowSums(select(temp, starts_with('CO2.'))) 
   return(df)
   }
-

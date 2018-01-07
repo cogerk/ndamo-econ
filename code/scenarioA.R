@@ -32,6 +32,7 @@ MLE <- function(df) {
   temp$biogasvol <- temp$CH4prod / rho_CH4 / fbiogas_CH4
   temp$CO2vol.digester <- temp$biogasvol * (1 - fbiogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$CO2vol.digester / vol.1molgas * MW_CO2
+  temp$CO2.burn <- temp$CH4prod * fCO2_BURN
   
   # No CH4 in effluent in scenario A
   temp$LCH4 <- rep(0, times=nrow(temp))
@@ -45,7 +46,7 @@ MLE <- function(df) {
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
   df$CH4.dissolved <- temp$LCH4
-  df$CH4.produced <- temp$CH4prod
+  df$CH4.toburn <- temp$CH4prod
   df$CO2.equivs  <- rowSums(select(temp, starts_with('CO2.'))) 
   return(df)
   }

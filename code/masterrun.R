@@ -11,7 +11,7 @@ MW_CO2 <<- 44
 MW_CH4 <<- 16
 MW_N <<- 14
 CH4_COD <<- 4
-n_conv <<- 1.4          # gVSS/gCOD, conversion constant
+n_conv <<- 1.48          # gVSS/gCOD, conversion constant
 H <- 0.0015 # Henry's Constant for methane
 CO2eq_CH4 <<- 35 
 
@@ -19,6 +19,8 @@ CO2eq_CH4 <<- 35
 sO2_AOB <<- 1.5 # Oxygen stoich coeff AOB 
 sO2_NOB <<- 0.5 # Oxygen stoich coeff NOB
 sCH4_NDAMO <<- 0.338 # stoich coeff of methane in NDAMO    
+sCOD_HET <<- 5 # gCOD/gN, gCOD required per gN eaten by denitrifiers.  From Metabolic reaction
+
 
 # Temperature, Pressure, and pH impacts are largely not relevant to this model. 
 T.mainstream <<- 25 # Degrees C, assumed
@@ -37,25 +39,19 @@ fx_AOB <<- 0.20    # gCOD/gN, gCOD of sludge produced per gN eaten by AOB, Wiesm
 fx_NOB <<- 0.06    # gCOD/gN, gCOD of sludge produced per gN eaten by NOB, Wiesmann, 1994 T=20C pH=8
 fx_anamx <<- 0.17  # gCOD/gN, gCOD of sludge produced per gN eaten by anammox.  Van der Starr
 fx_NDAMO <<- 0.22  # gCOD/gCH4,	gCOD of sludge produced per gCH4 eaten by NDAMO.  From Metabolic reactio
-fCOD_HET <<- 5     # gCOD/gN, gCOD required per gN eaten by denitrifiers.  From Metabolic reaction
 fx_digester <<- 0.59 # Assumed digester sludge conversion
 
 
 # CO2 Production
 fCO2_HET <<- 0.08 # kgCO2/kg COD
 fCO2_NDAMO <<- MW_CO2/MW_CH4
+fCO2_BURN <<- MW_CO2/MW_CH4
 rho_CH4 <<- MW_CH4 / vol.1molgas
 fbiogas_CH4 <<- 0.62 # Typical concentration of CH4 in biogas
 
 
 scenarios <- function(Q, cNin, cCODin, 
                       compare=TRUE, expand=TRUE){
-  
-  Nmax <- 60
-  CODmax <- 400
-  Qmax <- 600
-  cNin <- seq(Nmax*.1, Nmax, length=100) # Nitrogen concentration varies
-  cCODin <- seq(CODmax*.1, CODmax, length=100) # Carbon concentration varies
   
   #== Run at all combinations of values in N & C vectors if true
   if (expand) {
@@ -79,17 +75,10 @@ scenarios <- function(Q, cNin, cCODin,
   #== Compare all theoretical scenarios to base case MLE if true
   if (compare) {
     #= Calculate Sludge Production/O2 Demand as fraction of MLE
-    df.B <- cbind(df.B[, 1:7], 
-                  (df.B[, 8:ncol(df.B)]-df.A[, 8:ncol(df.A)])/df.A[, 8:ncol(df.A)])
-    df.C <- cbind(df.C[, 1:7], 
-                  (df.C[, 8:ncol(df.B)]-df.A[, 8:ncol(df.A)])/df.A[, 8:ncol(df.A)])
-    df.D <- cbind(df.D[, 1:7], 
-                  (df.D[, 8:ncol(df.B)]-df.A[, 8:ncol(df.A)])/df.A[, 8:ncol(df.A)])
-    
-    #= Calculate external COD addition differental between scenarios
-    df.B$COD.added <- df.B$COD.added - df.A$COD.added
-    df.C$COD.added <- df.C$COD.added - df.A$COD.added
-    df.D$COD.added <- df.D$COD.added - df.A$COD.added
+    df.B[, c(7:9,ncol(df.B))] <- (df.B[, c(7:9,ncol(df.B))]-df.A[, c(7:9,ncol(df.A))])/df.A[, c(7:9,ncol(df.A))]
+    df.C[, c(7:9,ncol(df.C))] <- (df.C[, c(7:9,ncol(df.C))]-df.A[, c(7:9,ncol(df.A))])/df.A[, c(7:9,ncol(df.A))]
+    df.D[, c(7:9,ncol(df.D))] <- (df.D[, c(7:9,ncol(df.D))]-df.A[, c(7:9,ncol(df.A))])/df.A[, c(7:9,ncol(df.A))]
+    df.D$COD.added[is.nan(df.D$COD.added)] <- 0
   }
   
   
