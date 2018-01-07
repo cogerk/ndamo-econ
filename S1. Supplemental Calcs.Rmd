@@ -25,19 +25,21 @@ $S_{Z_Y}$, Stoichiometric coefficient of *Z* in metabolism of organism *Y*
 
 $f_{x_Y}$, Sludge production of organism *Y* 
 
-| Process                       | $S_{Z_{Y}}$           | $f_{x_Y}$           |
-| ----------------------------- | --------------------- | ------------------- |
-| Heterotrophic Denitrification | 5      gCOD/gN        | 0.56  gCOD/gCOD     |
-| Heterotrophic Oxidation       | 1      g$O_2$/gCOD    | 0.56  gCOD/gCOD     |
-| Ammonium Oxidation            | 1.5    mol$O_2$/molN  | 0.20  gCOD/gN       |
-| Nitrite Oxidation             | 1      mol$O_2$/molN  | 0.06  gCOD/gN       |
-| Anammox Bacteria              | 1.5    mol$O_2$/molN  | 0.20  gCOD/gN       |
-| Anaerobic Membrane            | N/A                   | 0.56  gCOD/gCOD     |
-| n-DAMO                        | 0.338  mol$CH_4$/molN | 0.22  gCOD/g$CH_4$  |
+| Process                            | $S_{Z_{Y}}$           | $f_{x_Y}$           |
+| ---------------------------------- | --------------------- | ------------------- |
+| Heterotrophic Denitrification [1]  | 5      gCOD/gN        | 0.32  gCOD/gCOD     |
+| Heterotrophic Oxidation [1]        | 1      g$O_2$/gCOD    | 0.21  gCOD/gCOD     |
+| Ammonium Oxidation [1]             | 1.5    mol$O_2$/molN  | 0.11  gCOD/gN       |
+| Nitrite Oxidation [1]              | 0.5    mol$O_2$/molN  | 0.036  gCOD/gN      |
+| Anammox [1]                        | N/A                   | 0.13  gCOD/gN       |
+| n-DAMO  [2],[3]                    | 0.625  mol$CH_4$/molN | 0.22  gCOD/g$CH_4$  |
+| Anaerobic Membrane [4]             | N/A                   | 0.036  gCOD/gCOD    |
 
-$n=1.4$, gVSS/gCOD, conversion constant **[cite]**
 
-$f_{COD/HET}=5$, gCOD/gN, gram COD required per gram of denitrified nitrogen **[cite]**
+$n=1.48$, gVSS/gCOD, conversion constant [5]
+fx_digester <<- 0.59 # Assumed digester sludge conversion
+fbiogas_CH4 <<- 0.62 # Typical concentration of CH4 in biogas
+fCO2_HET <<- 0.08 # kgCO2/kg COD
 
 ```{r, echo=FALSE}
 MW_O2 <- 32

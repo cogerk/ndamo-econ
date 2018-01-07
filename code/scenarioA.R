@@ -10,13 +10,12 @@ MLE <- function(df) {
   fN_NOB <- fN_AOB  # wt%, frac of totN converted by NOB, assumed 100% in MLE system
   
   # Denitrification
-  temp$COD_reqd <- temp$LN * fCOD_HET # ammt of COD req'd.
+  temp$COD_reqd <- temp$LN * sCOD_HET # ammt of COD req'd.
   temp$COD_bal <- temp$COD_reqd-temp$LCOD
   temp$COD_added <- 0
   temp$COD_added[which(temp$COD_bal>0)] <- temp$COD_bal[which(temp$COD_bal>0)]
   temp$O2.HET <- rep(0, times=nrow(temp))
   temp$O2.HET[which(temp$COD_bal<0)] <-  -temp$COD_bal[which(temp$COD_bal<0)]
-  temp$px.HET <- (temp$LCOD + temp$COD_added) * fx_HET * n_conv #Slude produced
   temp$CO2.HET <- (temp$LCOD + temp$COD_added) * fCO2_HET #CO2 produced
   
   # Oxygen Demand/Sludge Handling (Universal)

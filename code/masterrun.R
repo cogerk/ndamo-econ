@@ -16,11 +16,10 @@ H <- 0.0015 # Henry's Constant for methane
 CO2eq_CH4 <<- 35 
 
 # Stoichiometry
+sCOD_HET <<- 5 # gCOD/gN, gCOD required per gN eaten by denitrifiers
 sO2_AOB <<- 1.5 # Oxygen stoich coeff AOB 
 sO2_NOB <<- 0.5 # Oxygen stoich coeff NOB
-sCH4_NDAMO <<- 0.338 # stoich coeff of methane in NDAMO    
-sCOD_HET <<- 5 # gCOD/gN, gCOD required per gN eaten by denitrifiers.  From Metabolic reaction
-
+sCH4_NDAMO <<- 0.635 # stoich coeff of methane/nitrate for NDAMO    
 
 # Temperature, Pressure, and pH impacts are largely not relevant to this model. 
 T.mainstream <<- 25 # Degrees C, assumed
@@ -33,21 +32,22 @@ R <- 0.082057338 # Universal Gas Constant, m3 atm/ kmol/K
 vol.1molgas <- R * (T.digester + 273.15) / P
 
 # Sludge production Factors
-fx_AnMBR <<- 0.14  # gCOD/gCOD, gCOD of sludge produced in AnMBR per gCOD eaten, Yeo, 2015 (Confirm)
-fx_HET <<- 0.56    # gCOD/gCOD, gCOD of sludge produced per gCOD eaten by heterotrophs, WWT book
-fx_AOB <<- 0.20    # gCOD/gN, gCOD of sludge produced per gN eaten by AOB, Wiesmann, 1994
-fx_NOB <<- 0.06    # gCOD/gN, gCOD of sludge produced per gN eaten by NOB, Wiesmann, 1994 T=20C pH=8
-fx_anamx <<- 0.17  # gCOD/gN, gCOD of sludge produced per gN eaten by anammox.  Van der Starr
-fx_NDAMO <<- 0.22  # gCOD/gCH4,	gCOD of sludge produced per gCH4 eaten by NDAMO.  From Metabolic reactio
+fx_AnMBR <<- 0.036   # gCOD/gCOD, gCOD of sludge produced in AnMBR per gCOD eaten
+fx_DENIT <<- 0.32    # gCOD/gCOD, gCOD of sludge produced per gCOD eaten by denitrifiers
+fx_HET <<- 0.21      # gCOD/gCOD, gCOD of sludge produced per gCOD eaten by COD oxidizing heterotrophs
+fx_AOB <<- 0.11      # gCOD/gN, gCOD of sludge produced per gN eaten by AOB
+fx_NOB <<- 0.036     # gCOD/gN, gCOD of sludge produced per gN eaten by NOB
+fx_anamx <<- 0.13    # gCOD/gN, gCOD of sludge produced per gN eaten by anammox
+fx_NDAMO <<- 0.22    # gCOD/gCH4,	gCOD of sludge produced per gCH4 eaten by NDAMO.
+
+# Digester & CO2 Production
 fx_digester <<- 0.59 # Assumed digester sludge conversion
-
-
-# CO2 Production
-fCO2_HET <<- 0.08 # kgCO2/kg COD
-fCO2_NDAMO <<- MW_CO2/MW_CH4
-fCO2_BURN <<- MW_CO2/MW_CH4
-rho_CH4 <<- MW_CH4 / vol.1molgas
 fbiogas_CH4 <<- 0.62 # Typical concentration of CH4 in biogas
+fCO2_HET <<- 0.08 # kgCO2/kg COD
+fCO2_NDAMO <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
+fCO2_BURN <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
+rho_CH4 <<- MW_CH4 / vol.1molgas #kg/m3
+
 
 
 scenarios <- function(Q, cNin, cCODin, 
