@@ -21,7 +21,7 @@ anamx_NDAMO_AnMBR <- function(df){
   fN_anamx <- (1-fN_AOB)*2*1.02 # wt%, fraction of N converted to N2 overall
   fN_NDAMO <- 1.32 - .32 * fN_AOB # wt%, frac of totN converted by NDAMO, See appendix
   temp$LCH4_cons <- fN_NDAMO * MW_CH4 / MW_N * sCH4_NDAMO * temp$LN # kgCH4/d, Methane consumed by NDAMO
-  temp$CO2.DAMO <- temp$LCH4_cons * fCO2_NDAMO 
+  temp$CO2.DAMO <- temp$LCH4_cons * sCO2_NDAMO 
   temp$px.Anamx<-fN_anamx * fx_anamx * temp$LN* n_conv  #kg/d, sludge produced from anammox
   temp$px.NDAMO<-fN_NDAMO * fx_NDAMO * temp$LN * n_conv  #kg/d, sludge produced from NDAMO
   
@@ -30,7 +30,7 @@ anamx_NDAMO_AnMBR <- function(df){
   temp$LCOD_conv <- fCOD_AnMBR * temp$LCOD # kgCOD/d, COD converted
   temp$px.AnMBR <- temp$LCOD_conv * fx_AnMBR * n_conv # kg/d
   temp$CH4prod <- temp$LCOD_conv * (1-fx_AnMBR) * CH4_COD
-  temp$biogasvol <- temp$CH4prod / rho_CH4 / fbiogas_CH4
+  temp$biogasvol <- temp$CH4prod / rho_CH4 / x_biogas_CH4
   temp$CO2vol.digester <- temp$biogasvol * (1 - fbiogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$CO2vol.digester / vol.1molgas * MW_CO2
   
@@ -46,7 +46,7 @@ anamx_NDAMO_AnMBR <- function(df){
   temp$COD.added <- 0
   temp$COD.added[which(temp$CH4regen<0)] <- -temp$CH4regen[which(temp$CH4regen<0)] / CH4_COD  # if need more than produced, get externally
   temp$CH4regen[which(temp$CH4regen<0)] <- 0 # if need more than produced, prodCH4  = 0
-  temp$CO2.burn <- temp$CH4regen * fCO2_BURN # CO2 from energy regeneration  
+  temp$CO2.burn <- temp$CH4regen * sCO2_BURN # CO2 from energy regeneration  
   
   # Totalize
   temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced

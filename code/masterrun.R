@@ -41,14 +41,12 @@ fx_anamx <<- 0.13    # gCOD/gN, gCOD of sludge produced per gN eaten by anammox
 fx_NDAMO <<- 0.22    # gCOD/gCH4,	gCOD of sludge produced per gCH4 eaten by NDAMO.
 
 # Digester & CO2 Production
-fx_digester <<- 0.59 # Assumed digester sludge conversion
-fbiogas_CH4 <<- 0.62 # Typical concentration of CH4 in biogas
-fCO2_HET <<- 0.08 # kgCO2/kg COD
-fCO2_NDAMO <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
-fCO2_BURN <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
+x_digester <<- 0.59 # Assumed digester sludge conversion
+x_biogas_CH4 <<- 0.62 # Typical concentration of CH4 in biogas
+sCO2_HET <<- 0.08 # kgCO2/kg COD
+sCO2_NDAMO <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
+sCO2_BURN <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
 rho_CH4 <<- MW_CH4 / vol.1molgas #kg/m3
-
-
 
 scenarios <- function(Q, cNin, cCODin, 
                       compare=TRUE, expand=TRUE){

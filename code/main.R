@@ -197,8 +197,8 @@ grid.arrange(grobs = gs, layout_matrix = lay)
 dev.off()
 
 # TODO: 
-#Greenhouse gas image
-#External Carbon Image
-#Supplemental Calcs
+# Greenhouse gas image
+# External Carbon Image
+# Supplemental Calcs
 # M&M Review & Submit
 

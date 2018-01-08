@@ -9,7 +9,7 @@ anamx <- function(df){
   fCOD_HET <- 1 # Assume 100% conversion of COD 
   temp$px.HET <- fCOD_HET * temp$LCOD * fx_HET * n_conv # Biomass produced/d
   temp$O2.HET <- fCOD_HET * temp$LCOD # O2 demand in A Stage
-  temp$CO2.HET <- temp$LCOD * fCO2_HET #CO2 produced
+  temp$CO2.HET <- temp$LCOD * sCO2_HET #CO2 produced
   
   # Nitrification
   fN_AOB <- 0.57 # wt%, fraction of total N in converted by AOB, see appendix
@@ -32,12 +32,11 @@ anamx <- function(df){
   
   
   # Anaerobic Digester
-  temp$px.OUT <- temp$px.TOT * (1-fx_digester)
+  temp$px.OUT <- temp$px.TOT * (1-x_digester)
   temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
-  temp$biogasvol <- temp$CH4prod / rho_CH4 / fbiogas_CH4
   temp$CO2vol.digester <- temp$biogasvol * (1 - fbiogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$CO2vol.digester / vol.1molgas * MW_CO2
-  temp$CO2.burn <- temp$CH4prod * fCO2_BURN
+  temp$CO2.burn <- temp$CH4prod * sCO2_BURN
   
   
   df$scenario <- rep('B', times=nrow(temp))
