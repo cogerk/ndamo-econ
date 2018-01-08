@@ -31,11 +31,11 @@ anamx_NDAMO_AnMBR <- function(df){
   temp$px.AnMBR <- temp$LCOD_conv * fx_AnMBR * n_conv # kg/d
   temp$CH4prod <- temp$LCOD_conv * (1-fx_AnMBR) * CH4_COD
   temp$biogasvol <- temp$CH4prod / rho_CH4 / x_biogas_CH4
-  temp$CO2vol.digester <- temp$biogasvol * (1 - fbiogas_CH4) # assume balance of biogas is CO2
+  temp$CO2vol.digester <- temp$biogasvol * (1 - x_biogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$CO2vol.digester / vol.1molgas * MW_CO2
   
   # Dissolved vs. Gaseous Methane
-  cCH4dis <- H * P * fbiogas_CH4 * MW_CH4 # Sat. Dissolved CH4 conc, kg/m3
+  cCH4dis <- H * P * x_biogas_CH4 * MW_CH4 # Sat. Dissolved CH4 conc, kg/m3
   temp$LCH4prod <- cCH4dis * df$Flowrate * 10^3 # kg Dissolved, kg/d
   temp$CH4regen <- temp$CH4prod - temp$LCH4prod # Dissolved methane not avail for regen, kg/d
   temp$LCH4prod[which(temp$CH4regen<0)] <- temp$CH4prod[which(temp$CH4regen<0)] # If very little methane produced, it may all stay dissolved.

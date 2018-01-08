@@ -34,7 +34,8 @@ anamx <- function(df){
   # Anaerobic Digester
   temp$px.OUT <- temp$px.TOT * (1-x_digester)
   temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
-  temp$CO2vol.digester <- temp$biogasvol * (1 - fbiogas_CH4) # assume balance of biogas is CO2
+  temp$biogasvol <- temp$CH4prod / rho_CH4 / x_biogas_CH4
+  temp$CO2vol.digester <- temp$biogasvol * (1 - x_biogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$CO2vol.digester / vol.1molgas * MW_CO2
   temp$CO2.burn <- temp$CH4prod * sCO2_BURN
   

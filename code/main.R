@@ -8,8 +8,8 @@ source('MonteCarloGenerationBuilder.R')
 Nmax <- 60
 CODmax <- 400
 Qmax <- 600
-cNin <- seq(Nmax*.01, Nmax, length=100) # Nitrogen concentration varies
-cCODin <- seq(CODmax*.01, CODmax, length=100) # Carbon concentration varies
+cNin <- seq(Nmax*.01, Nmax, length=5) # Nitrogen concentration varies
+cCODin <- seq(CODmax*.01, CODmax, length=5) # Carbon concentration varies
 Q <- 60 # constant flow rate
 
 #== Run simultions
@@ -31,7 +31,9 @@ lh$top.padding <- list(x = 0, units = "inches")
 lattice.options(layout.widths = lw, layout.heights = lh)
 
 # Setup up scales
-col.carbon <- colorRampPalette(c('blue', 'white'))
+library('rasterVis')
+
+col.carbon <- colorRampPalette(c('blue', 'light blue', rep('white', times=18)))
 ys<-list(at=seq(0,CODmax, by=50), seq(0,CODmax, by=50))
 xs<-list(at=seq(0,Nmax, by=15), labels=seq(0,Nmax, by=15))
 
@@ -42,36 +44,10 @@ levelplot(COD.added ~ Nitrogen * Carbon, data=d,
           main='% Reduction of Carbon Addition in Anammox/NDAMO/AnMBR Treatment',
           xlab='Total Nitrogen Concentration in Influent, mg/L',
           ylab='COD Concentration in Influent, mg/L',
-          at=seq(-1,-0.95, by=0.001), col.regions=col.carbon,
-          panel = function(...){
-            panel.levelplot(...)
-            panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
-            panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)},
-          scales=list(cex=0.75, tck = c(1,0), 
-                      x=xs,
-                      y=ys))
-
-
-
-levelplot(COD.added ~ Nitrogen * Carbon, data=result$A,
-          main='Carbon Addition Saved By Alternative Treatment',
-          xlab='Total Nitrogen Concentration in Influent, mg/L',
-          ylab='COD Concentration in Influent, mg/L',
-          at=seq(0, 25000, by=1), col.regions=col.carbon, 
-          scales=list(cex=0.75, tck = c(1,0), 
-                      x=xs,
-                      y=ys),
-          colorkey = list(c('0 kgCOD/day', 5000, 10000, 15000, 20000, 25000),
-                          at=seq(0,25000, by=5000)) ,
-          panel = function(...){
-            panel.levelplot(...)
-            panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
-            panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)})
-dev.off()
+          at=seq(-1,0,by=.005), col.regions=col.carbon)
 
 #== Plot Scenarios
 # Setup the plot margins
-
 lw <- list(left.padding = list(x = -.33, units = "inches"))
 lw$right.padding <- list(x = -.23, units = "inches")
 lh <- list(bottom.padding = list(x = -.25, units = "inches"))
