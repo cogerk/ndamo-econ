@@ -1,15 +1,20 @@
-# Run all reasonable parameters
+#=== main.R
+#== Load necessary files 
 setwd(paste(getwd(), '/code', sep = ''))
 source('masterrun.R')
 source('MonteCarloGenerationBuilder.R')
+library(latticeExtra)
+library(gridExtra)
+library(ggplot2)
+library(grid)
 
 
 #== Set up conditions to run
 Nmax <- 60
 CODmax <- 400
 Qmax <- 600
-cNin <- seq(Nmax*.01, Nmax, length=5) # Nitrogen concentration varies
-cCODin <- seq(CODmax*.01, CODmax, length=5) # Carbon concentration varies
+cNin <- seq(Nmax*.001, Nmax, length=100) # Nitrogen concentration varies
+cCODin <- seq(CODmax*.001, CODmax, length=100) # Carbon concentration varies
 Q <- 60 # constant flow rate
 
 #== Run simultions
@@ -17,36 +22,34 @@ result <- scenarios(Q,cNin,cCODin, compare=TRUE)
 
 
 #== Plot Figures
-library(latticeExtra)
-library(gridExtra)
-library(ggplot2)
-library(grid)
+# #= External Carbon Addition
+# # Set up Margins
+# lw <- list(left.padding = list(x = 0, units = "inches"))
+# lw$right.padding <- list(x = 0, units = "inches")
+# lh <- list(bottom.padding = list(x = 0, units = "inches"))
+# lh$top.padding <- list(x = 0, units = "inches")
+# lattice.options(layout.widths = lw, layout.heights = lh)
+# 
+# # Set up scales
+# col.carbon <- colorRampPalette(c('blue', 'light blue', rep('white', times=78)))
+ ys <- list(at=seq(0,CODmax, by=50), seq(0,CODmax, by=50))
+ xs <- list(at=seq(15,Nmax, by=15), labels=seq(15,Nmax, by=15))
+ xs_0 <- list(at=seq(0,Nmax, by=15), labels=seq(0,Nmax, by=15))
+# 
+# # Plot
+# #png('figures/External Carbon.png', width=4, height=5, units='in', res=500)
+# # natural gas is 10 cents per kWh 
+# # methane is 14.5 kwh/kg
+# # Won't include this plot, it's not very interesting.
+# d <- select(result$D, Nitrogen, Carbon, COD.added)
+# levelplot(COD.added ~ Nitrogen * Carbon, data=d, col.regions=col.carbon,
+#           main='% Reduction of Carbon Addition in Anammox/NDAMO/AnMBR Treatment',
+#           xlab='Total Nitrogen Concentration in Influent, mg/L',
+#           ylab='COD Concentration in Influent, mg/L')
 
-#== External Carbon Addition
-# Set up Margins
-lw <- list(left.padding = list(x = 0, units = "inches"))
-lw$right.padding <- list(x = 0, units = "inches")
-lh <- list(bottom.padding = list(x = 0, units = "inches"))
-lh$top.padding <- list(x = 0, units = "inches")
-lattice.options(layout.widths = lw, layout.heights = lh)
 
-# Setup up scales
-library('rasterVis')
 
-col.carbon <- colorRampPalette(c('blue', 'light blue', rep('white', times=18)))
-ys<-list(at=seq(0,CODmax, by=50), seq(0,CODmax, by=50))
-xs<-list(at=seq(0,Nmax, by=15), labels=seq(0,Nmax, by=15))
 
-# Plot
-#png('figures/External Carbon.png', width=4, height=5, units='in', res=500)
-d <- select(result$D, Nitrogen, Carbon, COD.added)
-levelplot(COD.added ~ Nitrogen * Carbon, data=d,
-          main='% Reduction of Carbon Addition in Anammox/NDAMO/AnMBR Treatment',
-          xlab='Total Nitrogen Concentration in Influent, mg/L',
-          ylab='COD Concentration in Influent, mg/L',
-          at=seq(-1,0,by=.005), col.regions=col.carbon)
-
-#== Plot Scenarios
 # Setup the plot margins
 lw <- list(left.padding = list(x = -.33, units = "inches"))
 lw$right.padding <- list(x = -.23, units = "inches")
@@ -57,29 +60,32 @@ lattice.options(layout.widths = lw, layout.heights = lh)
 # Set up labels
 col.labels <- c('-100%', '-50%', '0%','50%','100%')
 col.percent <- colorRampPalette(c('blue', 'white', 'red'))
+col.percent.ext <- colorRampPalette(c('blue', 'white', 'red', 'darkred'))
 ys<-list(at=seq(0,CODmax, by=50), labels=rep('', length(seq(0,CODmax, by=10))))
 gs <- list()
 gs[1] <- grob(textGrob('SHARON vs. MLE'))
 gs[2] <- grob(textGrob(c('SHARON/NDAMO', 'vs. MLE'), y=c(0.8,0.33)))
 gs[3] <- grob(textGrob(c('SHARON/NDAMO/AnMBR','vs. MLE'), y=c(0.8,0.33)))
 gs[4] <- grob(textGrob('Total Nitrogen Concentration in Influent, mg/L'))
-gs[5] <- grob(textGrob(seq(50,CODmax, by=50), y=seq(0.15, 1, length.out = 8), x=.75, just = 'right'))
+gs[5] <- grob(textGrob(seq(0,CODmax, by=50), y=seq(0.12, .85, length.out = 8), x=.75, just='right'))
 gs[6] <- grob(textGrob('COD Concentration in Influent, mg/L', rot=90))
 
 
 # Set up plot layout
 lay <- rbind(rep(7, times=20),
-             c(6,5,rep(1:3,each=5), rep(8,times=3)),
+             c(6,5,rep(1:3,each=5), 12, 13, 13),
              matrix(rep(c(6,5,rep(9:11, each=5),rep(8, times=3)),times=6), 
                     nrow=6, 
                     byrow=T),
              rep(4, times=20))
 
-#== Plot Oxygen Demand
+
+#= Plot Oxygen Demand
 png('figures/O2 Demand.png', width=8.5, height=3, units='in', res=500)
 p <- list()
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, O2.demand)
+  if (i > 1) {x_tck <- xs} else {x_tck <- xs_0}
   p[[i]] <- levelplot(O2.demand ~ Nitrogen * Carbon, data=d,
                       panel = function(...){
                         panel.levelplot(...)
@@ -89,7 +95,7 @@ for (i in 1:(length(result)-1)) {
                       at=seq(-1,1,by=.01), col.regions=col.percent, 
                       xlab="", ylab="",
                       scales=list(cex=1, tck = c(1,0), 
-                                  x=xs,
+                                  x=x_tck,
                                   y=ys),
                       colorkey = list(labels=list(cex=1, 
                                                   labels=col.labels)))
@@ -101,47 +107,16 @@ for (i in 1:(length(result)-1)) {
 }
 
 # Assign O2 Demand graphs to layout
-gs[7] <- grob(textGrob(expression('Oxygen Demand'), gp=gpar(cex=1.25)))
+gs[7] <- grob(textGrob(expression('Oxygen Demand w/ respect to Base Case'), gp=gpar(cex=1.25)))
 gs[8] <- leg
 gs[9:11] <- p
+gs[12] <- grob(textGrob(''))
+gs[13] <- grob(textGrob(''))
 grid.arrange(grobs = gs, layout_matrix = lay)
 dev.off()
 
 
-#== Plot Oxygen Demand
-png('figures/External Carbon.png', width=8.5, height=3, units='in', res=500)
-
-
-p <- list()
-for (i in 1:(length(result)-1)) {
-  d <- select(result[[i+1]], Nitrogen, Carbon, COD.added)
-  p[[i]] <- levelplot(COD.added ~ Nitrogen * Carbon, data=d,
-                      panel = function(...){
-                        panel.levelplot(...)
-                        panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
-                        panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
-                      },
-                      at=seq(-1,-.9,by=.01), col.regions=col.percent, 
-                      xlab="", ylab="",
-                      scales=list(cex=1, tck = c(1,0), 
-                                  x=xs,
-                                  y=ys))
-  
-  leg.list <- p[[i]]$legend$right$args$key
-  leg.list$cex <- 1.5
-  leg <-  grob(draw.colorkey(leg.list))
-  p[[i]] <- update(p[[i]], legend=NULL)
-}
-
-# Assign O2 Demand graphs to layout
-gs[7] <- grob(textGrob(expression('Oxygen Demand'), gp=gpar(cex=1.25)))
-gs[8] <- leg
-gs[9:11] <- p
-grid.arrange(grobs = gs, layout_matrix = lay)
-dev.off()
-
-
-#== Plot Sludge Production 
+#= Plot Sludge Production 
 png('figures/Sludge Production.png', width=8.5, height=3, units='in', res=500)
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, sludge.out)
@@ -151,30 +126,91 @@ for (i in 1:(length(result)-1)) {
                         panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
                         panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
                       },
-                      at=seq(-1,1,by=.01),col.regions=col.percent, 
+                      at=c(seq(-1,1,by=.01), max(d$sludge.out)),
+                      col.regions=col.percent.ext, 
                       xlab="", ylab="",
                       scales=list(cex=1, tck = c(1,0), 
                                   x=xs,
                                   y=ys),
-                      colorkey = list(labels=list(cex=1, 
-                                                  labels=col.labels)))
-  
-  leg.list <- p[[i]]$legend$right$args$key
-  leg.list$cex <- 1.5
-  leg <-  grob(draw.colorkey(leg.list))
+                      colorkey = NULL)
+}
+
+# Assign Sludge Production graphs to layout
+gs[7] <- grob(textGrob(expression('Sludge Production w/ respect to Base Case'), gp=gpar(cex=1.25)))
+gs[8] <- leg
+gs[9:11] <- p
+gs[12] <- grob(rectGrob(gp=gpar(fill='dark red', alpha=1), 
+                        width=unit(.55,'npc'), height=unit(.7,'npc'), x=0.8))
+gs[13] <- grob(textGrob('> 100%'), gp=gpar(cex=1.25), x=unit(-1,'npc'))
+grid.arrange(grobs = gs, layout_matrix = lay)
+dev.off()
+
+
+#= Plot Methane Production
+png('figures/Methane Production.png', width=8.5, height=3, units='in', res=500)
+for (i in 1:(length(result)-1)) {
+  d <- select(result[[i+1]], Nitrogen, Carbon, CH4.toburn)
+  p[[i]] <- levelplot(CH4.toburn ~ Nitrogen * Carbon, data=d,
+                      panel = function(...){
+                        panel.levelplot(...)
+                        panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
+                        panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
+                      },
+                      at=c(seq(-1,1,by=.01), max(d$CH4.toburn)),
+                      col.regions=col.percent.ext, 
+                      xlab="", ylab="",
+                      scales=list(cex=1, tck = c(1,0), 
+                                  x=xs,
+                                  y=ys))
+                      #colorkey = list(labels=list(cex=1, 
+                      #                            labels=col.labels)))
+  p[[i]] <- update(p[[i]], legend=NULL)
+}
+
+# Assign Methane Production graphs to layout
+gs[7] <- grob(textGrob(expression('Methane Production w/ respect to Base Case'), gp=gpar(cex=1.25)))
+gs[8] <- leg
+gs[9:11] <- p
+gs[12] <- grob(rectGrob(gp=gpar(fill='dark red', alpha=1), 
+                        width=unit(.55,'npc'), height=unit(.7,'npc'), x=0.8))
+gs[13] <- grob(textGrob('> 100%'), gp=gpar(cex=1.25), x=unit(-1,'npc'))
+grid.arrange(grobs = gs, layout_matrix = lay)
+dev.off()
+
+
+#= Plot GHG Emissions
+png('figures/GHG.png', width=8.5, height=3, units='in', res=500)
+for (i in 1:(length(result)-1)) {
+  d <- select(result[[i+1]], Nitrogen, Carbon, CO2.equivs)
+  p[[i]] <- levelplot(CO2.equivs ~ Nitrogen * Carbon, data=d,
+                      panel = function(...){
+                        panel.levelplot(...)
+                        panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
+                        panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
+                      },
+                      at=c(seq(-1,1,by=.01), max(d$CO2.equivs)),
+                      col.regions=col.percent.ext, 
+                      xlab="", ylab="",
+                      scales=list(cex=1, tck = c(1,0), 
+                                  x=xs,
+                                  y=ys))
+  #colorkey = list(labels=list(cex=1, 
+  #                            labels=col.labels)))
   p[[i]] <- update(p[[i]], legend=NULL)
 }
 
 # Assign Sludge Production graphs to layout
-gs[7] <- grob(textGrob(expression('Sludge Production'), gp=gpar(cex=1.25)))
+gs[7] <- grob(textGrob(expression('GHG Emissions w/ respect to Base Case'), gp=gpar(cex=1.25)))
 gs[8] <- leg
 gs[9:11] <- p
+gs[12] <- grob(rectGrob(gp=gpar(fill='dark red', alpha=1), 
+                        width=unit(.55,'npc'), height=unit(.7,'npc'), x=0.8))
+gs[13] <- grob(textGrob('> 100%'), gp=gpar(cex=1.25), x=unit(-1,'npc'))
 grid.arrange(grobs = gs, layout_matrix = lay)
 dev.off()
 
 # TODO: 
-# Greenhouse gas image
-# External Carbon Image
+# External carbon addition paragraph
 # Supplemental Calcs
-# M&M Review & Submit
+
 

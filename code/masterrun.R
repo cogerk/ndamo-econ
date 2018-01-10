@@ -73,9 +73,9 @@ scenarios <- function(Q, cNin, cCODin,
   #== Compare all theoretical scenarios to base case MLE if true
   if (compare) {
     #= Calculate Sludge Production/O2 Demand as fraction of MLE
-    df.B[, c(7:9,ncol(df.B))] <- (df.B[, c(7:9,ncol(df.B))]-df.A[, c(7:9,ncol(df.A))])/df.A[, c(7:9,ncol(df.A))]
-    df.C[, c(7:9,ncol(df.C))] <- (df.C[, c(7:9,ncol(df.C))]-df.A[, c(7:9,ncol(df.A))])/df.A[, c(7:9,ncol(df.A))]
-    df.D[, c(7:9,ncol(df.D))] <- (df.D[, c(7:9,ncol(df.D))]-df.A[, c(7:9,ncol(df.A))])/df.A[, c(7:9,ncol(df.A))]
+    df.B[, c(7:9,11,ncol(df.B))] <- (df.B[, c(7:9,11,ncol(df.B))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
+    df.C[, c(7:9,11,ncol(df.C))] <- (df.C[, c(7:9,11,ncol(df.C))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
+    df.D[, c(7:9,11,ncol(df.D))] <- (df.D[, c(7:9,11,ncol(df.D))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
     df.D$COD.added[is.nan(df.D$COD.added)] <- 0
   }
   

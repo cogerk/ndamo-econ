@@ -36,12 +36,12 @@ anamx_NDAMO_AnMBR <- function(df){
   
   # Dissolved vs. Gaseous Methane
   cCH4dis <- H * P * x_biogas_CH4 * MW_CH4 # Sat. Dissolved CH4 conc, kg/m3
-  temp$LCH4prod <- cCH4dis * df$Flowrate * 10^3 # kg Dissolved, kg/d
-  temp$CH4regen <- temp$CH4prod - temp$LCH4prod # Dissolved methane not avail for regen, kg/d
-  temp$LCH4prod[which(temp$CH4regen<0)] <- temp$CH4prod[which(temp$CH4regen<0)] # If very little methane produced, it may all stay dissolved.
+  temp$LCH4diss <- cCH4dis * df$Flowrate * 10^3 # kg Dissolved, kg/d
+  temp$CH4regen <- temp$CH4prod - temp$LCH4diss # Dissolved methane not avail for regen, kg/d
+  temp$LCH4diss[which(temp$CH4regen<0)] <- temp$CH4prod[which(temp$CH4regen<0)] # If very little methane produced, assume all dissolves.
   temp$CH4regen[which(temp$CH4regen<0)] <- 0 # Then no methane avail for energy regen
-  temp$LCH4 <- temp$LCH4prod - temp$LCH4_cons # kg Dissolved after NDAMO consume, kg/d
-  temp$CH4regen[which(temp$LCH4<0)] <- temp$CH4prod[which(temp$LCH4<0)] + temp$LCH4[which(temp$LCH4<0)] # if need more than dissolved, take it from CH4 gas
+  temp$LCH4 <- temp$LCH4diss - temp$LCH4_cons # kg Dissolved after NDAMO consume, kg/d
+  temp$CH4regen[which(temp$LCH4<0)] <- temp$CH4regen[which(temp$LCH4<0)] + temp$LCH4[which(temp$LCH4<0)] # if need more than dissolved, take it from CH4 gas
   temp$LCH4[which(temp$LCH4<0)] <- 0 # if need more than dissolved, dissolved CH4 = 0
   temp$COD.added <- 0
   temp$COD.added[which(temp$CH4regen<0)] <- -temp$CH4regen[which(temp$CH4regen<0)] / CH4_COD  # if need more than produced, get externally
