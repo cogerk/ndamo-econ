@@ -15,8 +15,11 @@ MLE <- function(df) {
   temp$px.DENIT <- fx_DENIT * temp$COD_reqd
   temp$COD_added <- 0
   temp$COD_added[which(temp$COD_bal>0)] <- temp$COD_bal[which(temp$COD_bal>0)]
+  # If not all COD is denitrified, oxidize the rest with heterotrophs.
   temp$O2.HET <- rep(0, times=nrow(temp))
   temp$O2.HET[which(temp$COD_bal<0)] <-  -temp$COD_bal[which(temp$COD_bal<0)]
+  temp$px.HET <- 0 
+  temp$px.HET[which(temp$COD_bal<0)] <-  -temp$COD_bal[which(temp$COD_bal<0)] * n_conv * fx_HET
   temp$CO2.HET <- (temp$LCOD + temp$COD_added) * sCO2_HET #CO2 produced
   
   # Oxygen Demand/Sludge Handling (Universal)
