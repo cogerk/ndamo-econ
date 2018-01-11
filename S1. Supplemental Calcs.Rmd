@@ -184,12 +184,12 @@ fCOD_HET <- data.frame(A=NA, B=1) # Assume 100% conversion of COD
 ```
 
 ** ii. CANON Anammox system **
-It is assumed that nitrifcation occurs at a ratio that is ideal for anammox removal, that is:
-$$f_{N_{AOB}} = 0.57$$
+It is assumed that partial nitrifcation occurs at a ratio that is ideal for anammox removal, that is for the anammox reaction:
+$$1 NH_4^+ + 1.3NO_2^- \rightarrow 1N_2 + 0.3 NO_3^- [7]$$
+$$f_{N_{AOB}} = \frac{s_{{NO_2^-}_{amx}}}{s_{{NO_2^-}_{amx}}+s_{{NH_4^+}_{amx}}} =\frac{1.3}{1.3+1}=0.57$$
 $$f_{N_{NOB}} = 0$$
-**[see appendix]**
-The fraction of nitrogen as ammonium consumed by anammox is therefore 
-$$f_{NH_{4_{AMX}}} = (1 - f_{N_{AOB}})\times2\times1.02$$
+Assume, with a stoichiometric feed into the CANON reactor, assume anammox will convert 100% of nitrogen.
+$$f_{NH_{4_{AMX}}} = 1$$
 
 ```{r}
   fN_AOB <- 0.57, # wt%, fraction of total N in converted by AOB, 
@@ -202,7 +202,26 @@ $$f_{NH_{4_{AMX}}} = (1 - f_{N_{AOB}})\times2\times1.02$$
 ** i. COD Removal **  
 COD Removal in scenario C is identical to COD removal in scenario B.
 ** i. Nitrifcation **
-48.5% of flow was calculated to be the appropriate diversion to ensure 100% N conversion. **[see appendix]** Unlike the CANON system, The nitrification system is assumed to have 100% nitratation by NOB.
+50% of flow was calculated to be the appropriate diversion to ensure 100% N conversion as follows:
+$$Anammox\space Reaction: 1 NH_4^+ + 1.3 NO_2^- \rightarrow 1N_2 + 0.3 NO_3^- [7] $$
+$$NDAMO\space Reaction: 1 NO_2^- \rightarrow + 1 NO_3^- [2]$$ 
+
+Multiply the NDAMO reaction by 1.3 (130% of the influent will be converted by n-damo, more than 100% is OK because nitrate produced by anammox will be converted back to nitrite by n-damo for another round of anammox) and sum these two reactions to find the required fraction of $NO_3^-$ to be fed into the anammox reactor:
+$$1 NH_4^+ + 1.3 NO_2^- \rightarrow 1 N_2 + 0.3 NO_3^- [7] $$
+$$+$$
+$$1.3 NO_3^- \rightarrow + 1.3 NO_2^-$$ 
+$$Anammox/NDAMO \space Overall: 1 NH_4^+ + 1 NO_3^- \rightarrow 1 N_2 $$
+Therefore, the conversion by AOB & NOB is:
+$$f_{N_{AOB}}=f_{N_{NOB}}=\frac{s_{{NO_2^-}_{amx/ndamo}}}{s_{{NO_2^-}_{amx/ndamo}}+s_{{NH_4^+}_{amx/ndamo}}}=\frac{1}{1+1}=0.5$$
+Total conversion by n-damo is 130% and total conversion by anammox is 100% due to the multiplying factors used in finding the overall reaction.
+$$f_{N_{ndamo}}=1.3$$
+$$f_{N_{amx}}=1$$
+
+
+
+
+
+Unlike the CANON system, The nitrification system is assumed to have 100% nitratation by NOB.
 
 $$f_{N_{AOB}} = f_{N_{NOB}} = 1 - 0.485$$
 
@@ -280,3 +299,4 @@ ${CH_{4_{PROD}}}$ The m$^3$ of CH$_4$ produced for energy recovery is in step 4 
 [4]	J. Gouveia, F. Plaza, G. Garralon, F. Fdz-Polanco, and M. Peña, “Long-term operation of a pilot scale anaerobic membrane bioreactor (AnMBR) for the treatment of municipal wastewater under psychrophilic conditions,” Bioresour. Technol., vol. 185, pp. 225–233, Jun. 2015.
 [5]	G. v R. Marais and G. A. Ekama, “The activated sludge process – Part 1: Steady state behaviour,” WATER SA, vol. 2, no. 4, 1976.
 [6]	J. L. Campos, D. Valenzuela-Heredia, A. Pedrouso, A. Val del Río, M. Belmonte, and A. Mosquera-Corral, “Greenhouse Gases Emissions from Wastewater Treatment Plants: Minimization, Treatment, and Prevention,” J. Chem., vol. 2016, pp. 1–12, Apr. 2016.
+[7] Van der Star....

@@ -1,9 +1,9 @@
 # Run all scenarios for given inputs 
 library(tidyverse)
-source(file = 'scenarioA.R')
-source(file = 'scenarioB.R')
-source(file = 'scenarioC.R')
-source(file = 'scenarioD.R')
+source(file = 'code/scenarioA.R')
+source(file = 'code/scenarioB.R')
+source(file = 'code/scenarioC.R')
+source(file = 'code/scenarioD.R')
 
 ### Constants
 MW_O2 <<- 32
@@ -16,7 +16,7 @@ H <- 0.0015 # Henry's Constant for methane
 CO2eq_CH4 <<- 35 
 
 # Stoichiometry
-sCOD_HET <<- 5 # gCOD/gN, gCOD required per gN eaten by denitrifiers
+sCOD_DENIT <<- 5 # gCOD/gN, gCOD required per gN eaten by denitrifiers
 sO2_AOB <<- 1.5 # Oxygen stoich coeff AOB 
 sO2_NOB <<- 0.5 # Oxygen stoich coeff NOB
 sCH4_NDAMO <<- 0.635 # stoich coeff of methane/nitrate for NDAMO    

@@ -12,11 +12,11 @@ anamx <- function(df){
   temp$CO2.HET <- temp$LCOD * sCO2_HET #CO2 produced
   
   # Nitrification
-  fN_AOB <- 0.57 # wt%, fraction of total N in converted by AOB, see appendix
+  fN_AOB <- 1.3/2.3 # wt%, fraction of total N in converted by AOB, see appendix
   fN_NOB <- 0  # wt%, frac of totN converted by NOB, assumed 100% in anammox system # Make temp dependent?
   
   # Anammox
-  fN_anamx <- (1 - fN_AOB) * 2 * 1.02 # wt%, fraction of N converted to N2 overall
+  fN_anamx <- 1 # wt%, fraction of N converted to N2 overall
   
   # Oxygen Demand/Sludge Handling
   temp$O2.AOB <- (fN_AOB * temp$LN) / MW_N * MW_O2 * sO2_AOB # kg/D O2 req'd by AOB
@@ -37,7 +37,7 @@ anamx <- function(df){
   temp$biogasvol <- temp$CH4prod / rho_CH4 / x_biogas_CH4
   temp$CO2vol.digester <- temp$biogasvol * (1 - x_biogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$CO2vol.digester / vol.1molgas * MW_CO2
-  temp$CO2.burn <- temp$CH4prod * sCO2_BURN
+  temp$CO2.burn <- temp$CH4prod * sCO2_BURN * MW_CO2 / MW_CH4
   
   
   df$scenario <- rep('B', times=nrow(temp))

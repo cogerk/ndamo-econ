@@ -9,19 +9,18 @@ anamx_NDAMO_AnMBR <- function(df){
   temp <- df
   
   # Nitrification
-  fN_AOB <- ((1 / (1-0.26 / 1.32)) * (1 / 1.32) + 1) / 
-    ((1 / (1 - 0.26 / 1.32)) * (1 / 1.32) + 2); # Fraction of N in converted by AOB, see appendix
-  fN_NOB <- fN_AOB;  # wt%, frac of N in converted by NOB, 100% of NO2- in goes to NO3-
+  fN_AOB <- 0.5 # wt%, fraction of total N in converted by AOB, see supplemental calculations
+  fN_NOB <- fN_AOB
   temp$O2.AOB <- (fN_AOB * temp$LN) / MW_N * MW_O2 * sO2_AOB # kg/D O2 req'd by AOB
   temp$O2.NOB <- (fN_NOB * temp$LN) / MW_N * MW_O2 * sO2_NOB # kg/D O2 req'd by NOB
   temp$px.AOB<-fN_AOB * fx_AOB * n_conv * temp$LN #kg/d, sludge produced from AOB
   temp$px.NOB<-fN_NOB * fx_NOB* n_conv* temp$LN #kg/d, sludge produced from NOB
   
   # Anammox/NDAMO
-  fN_anamx <- (1-fN_AOB)*2*1.02 # wt%, fraction of N converted to N2 overall
-  fN_NDAMO <- 1.32 - .32 * fN_AOB # wt%, frac of totN converted by NDAMO, See appendix
+  fN_anamx <- 1 # wt%, fraction of N converted to N2 overall, see supplemental calculations
+  fN_NDAMO <- 1.3 # wt%, frac of totN converted by NDAMO, see supplemental calculations
   temp$LCH4_cons <- fN_NDAMO * MW_CH4 / MW_N * sCH4_NDAMO * temp$LN # kgCH4/d, Methane consumed by NDAMO
-  temp$CO2.DAMO <- temp$LCH4_cons * sCO2_NDAMO 
+  temp$CO2.DAMO <- temp$LCH4_cons * sCO2_NDAMO * MW_CO2 / MW_CH4
   temp$px.Anamx<-fN_anamx * fx_anamx * temp$LN* n_conv  #kg/d, sludge produced from anammox
   temp$px.NDAMO<-fN_NDAMO * fx_NDAMO * temp$LN * n_conv  #kg/d, sludge produced from NDAMO
   
@@ -40,13 +39,15 @@ anamx_NDAMO_AnMBR <- function(df){
   temp$CH4regen <- temp$CH4prod - temp$LCH4diss # Dissolved methane not avail for regen, kg/d
   temp$LCH4diss[which(temp$CH4regen<0)] <- temp$CH4prod[which(temp$CH4regen<0)] # If very little methane produced, assume all dissolves.
   temp$CH4regen[which(temp$CH4regen<0)] <- 0 # Then no methane avail for energy regen
+  temp$LCH4diss <- 0.5 * temp$LCH4diss # kg Dissolved, kg/d, half will be consumed by MOBs in nitrification reactor
+  temp$CO2.MOB <- 0.5 * temp$LCH4diss * MW_CO2 / MW_CH4 # CO2 production by MOBs, 
   temp$LCH4 <- temp$LCH4diss - temp$LCH4_cons # kg Dissolved after NDAMO consume, kg/d
   temp$CH4regen[which(temp$LCH4<0)] <- temp$CH4regen[which(temp$LCH4<0)] + temp$LCH4[which(temp$LCH4<0)] # if need more than dissolved, take it from CH4 gas
   temp$LCH4[which(temp$LCH4<0)] <- 0 # if need more than dissolved, dissolved CH4 = 0
   temp$COD.added <- 0
   temp$COD.added[which(temp$CH4regen<0)] <- -temp$CH4regen[which(temp$CH4regen<0)] / CH4_COD  # if need more than produced, get externally
   temp$CH4regen[which(temp$CH4regen<0)] <- 0 # if need more than produced, prodCH4  = 0
-  temp$CO2.burn <- temp$CH4regen * sCO2_BURN # CO2 from energy regeneration  
+  temp$CO2.burn <- temp$CH4regen * sCO2_BURN * MW_CO2 / MW_CH4 # CO2 from energy regeneration  
   
   # Totalize
   temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced

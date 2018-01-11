@@ -11,14 +11,14 @@ anamx_NDAMO<- function(df){
   temp$CO2.HET <- temp$LCOD * sCO2_HET #CO2 produced
   
   # Nitrification
-  fN_AOB <- 1 - 0.485 # wt%, fraction of total N in converted by AOB, see appendix
+  fN_AOB <- 0.5 # wt%, fraction of total N in converted by AOB, see supplemental calculations
   fN_NOB <- fN_AOB
   
   # Anammox/NDAMO
-  fN_anamx <- (1 - fN_AOB) * 2 * 1.02 # wt%, fraction of N converted to N2 overall
-  fN_NDAMO <- 1.32 - .32 * fN_AOB # wt%, frac of totN converted by NDAMO, See appendix
+  fN_anamx <- 1 # wt%, fraction of N converted to N2 overall, see supplemental calculations
+  fN_NDAMO <- 1.3 # wt%, frac of totN converted by NDAMO, see supplemental calculations
   temp$LCH4_cons <- temp$LN * fN_NDAMO / MW_N * sCH4_NDAMO * MW_CH4  # kgCH4/d, Methane consumed by NDAMO
-  temp$CO2.DAMO <- temp$LCH4_cons * sCO2_NDAMO 
+  temp$CO2.DAMO <- temp$LCH4_cons * sCO2_NDAMO * MW_CO2 / MW_CH4
   
   # Oxygen Demand/Sludge Handling
   temp$O2.AOB <- (fN_AOB * temp$LN) / MW_N * MW_O2 * sO2_AOB # kg/D O2 req'd by AOB
@@ -45,7 +45,7 @@ anamx_NDAMO<- function(df){
   temp$COD.added <- 0
   temp$COD.added[which(temp$CH4regen<0)] <- -temp$CH4regen[which(temp$CH4regen<0)] / CH4_COD  # if need more than produced, get externally
   temp$CH4regen[which(temp$CH4regen<0)] <- 0 # if need more than produced, prodCH4  = 0
-  temp$CO2.burn <- temp$CH4regen * sCO2_BURN # CO2 from energy regeneration
+  temp$CO2.burn <- temp$CH4regen * sCO2_BURN * MW_CO2 / MW_CH4 # CO2 from energy regeneration
   
   
   df$scenario <- rep('C', times=nrow(temp))

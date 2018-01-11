@@ -10,7 +10,7 @@ MLE <- function(df) {
   fN_NOB <- fN_AOB  # wt%, frac of totN converted by NOB, assumed 100% in MLE system
   
   # Denitrification
-  temp$COD_reqd <- temp$LN * sCOD_HET # ammt of COD req'd.
+  temp$COD_reqd <- temp$LN * sCOD_DENIT # ammt of COD req'd.
   temp$COD_bal <- temp$COD_reqd-temp$LCOD
   temp$px.DENIT <- fx_DENIT * temp$COD_reqd
   temp$COD_added <- 0
@@ -35,7 +35,7 @@ MLE <- function(df) {
   temp$biogasvol <- temp$CH4prod / rho_CH4 / x_biogas_CH4
   temp$CO2vol.digester <- temp$biogasvol * (1 - x_biogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$CO2vol.digester / vol.1molgas * MW_CO2
-  temp$CO2.burn <- temp$CH4prod * sCO2_BURN
+  temp$CO2.burn <- temp$CH4prod * sCO2_BURN * MW_CO2 / MW_CH4
   
   # No CH4 in effluent in scenario A
   temp$LCH4 <- rep(0, times=nrow(temp))
