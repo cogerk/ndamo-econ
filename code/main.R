@@ -78,6 +78,13 @@ for (i in 1:(length(result)-1)) {
   p[[i]] <- update(p[[i]], legend=NULL)
 }
 
+# Assign Sludge Production graphs to layout
+gs[7] <- grob(textGrob(expression('Sludge Production w/ respect to Base Case'), gp=gpar(cex=1.25)))
+gs[8] <- leg
+gs[9:11] <- p
+grid.arrange(grobs = gs, layout_matrix = lay)
+dev.off()
+
 #= Plot Sludge Production 
 png('code/figures/Sludge Production.png', width=8.5, height=3, units='in', res=500)
 for (i in 1:(length(result)-1)) {
@@ -100,13 +107,6 @@ for (i in 1:(length(result)-1)) {
   leg <-  grob(draw.colorkey(leg.list))
   p[[i]] <- update(p[[i]], legend=NULL)
 }
-
-# Assign Sludge Production graphs to layout
-gs[7] <- grob(textGrob(expression('Sludge Production w/ respect to Base Case'), gp=gpar(cex=1.25)))
-gs[8] <- leg
-gs[9:11] <- p
-grid.arrange(grobs = gs, layout_matrix = lay)
-dev.off()
 
 # Assign O2 Demand graphs to layout
 gs[7] <- grob(textGrob(expression('Oxygen Demand w/ respect to Base Case'), gp=gpar(cex=1.25)))
