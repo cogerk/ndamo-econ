@@ -36,9 +36,9 @@ ys <-list(at=seq(0,CODmax, by=50), labels=rep('', length(seq(0,CODmax, by=10))))
 xs <- list(at=seq(15,Nmax, by=15), labels=seq(15,Nmax, by=15))
 xs_0 <- list(at=seq(0,Nmax, by=15), labels=seq(0,Nmax, by=15))
 gs <- list()
-gs[1] <- grob(textGrob('SHARON vs. MLE'))
-gs[2] <- grob(textGrob(c('ANAMMOX/NDAMO', 'vs. MLE'), y=c(0.8,0.33)))
-gs[3] <- grob(textGrob(c('AMX/NDAMO/AnMBR','vs. MLE'), y=c(0.8,0.33)))
+gs[1] <- grob(textGrob('CANON (B) vs. MLE (A)'))
+gs[2] <- grob(textGrob(c('anammox/n-damo (C)', 'vs. MLE (A)'), y=c(0.8,0.33)))
+gs[3] <- grob(textGrob(c('D. amx/n-damo/AnMBR (D)','vs. MLE (A)'), y=c(0.8,0.33)))
 gs[4] <- grob(textGrob('Total Nitrogen Concentration in Influent, mg/L'))
 gs[5] <- grob(textGrob(seq(0,CODmax, by=50), y=seq(0.12, .85, length.out = 8), x=.75, just='right'))
 gs[6] <- grob(textGrob('COD Concentration in Influent, mg/L', rot=90))
@@ -78,8 +78,8 @@ for (i in 1:(length(result)-1)) {
   p[[i]] <- update(p[[i]], legend=NULL)
 }
 
-# Assign Sludge Production graphs to layout
-gs[7] <- grob(textGrob(expression('Sludge Production w/ respect to Base Case'), gp=gpar(cex=1.25)))
+# Assign Oxygen Demand graphs to layout
+gs[7] <- grob(textGrob(expression('Oxygen Demand w/ respect to Base Case'), gp=gpar(cex=1.25)))
 gs[8] <- leg
 gs[9:11] <- p
 grid.arrange(grobs = gs, layout_matrix = lay)
@@ -108,8 +108,8 @@ for (i in 1:(length(result)-1)) {
   p[[i]] <- update(p[[i]], legend=NULL)
 }
 
-# Assign O2 Demand graphs to layout
-gs[7] <- grob(textGrob(expression('Oxygen Demand w/ respect to Base Case'), gp=gpar(cex=1.25)))
+# Assign sludge production graphs to layout
+gs[7] <- grob(textGrob(expression('Sludge Production w/ respect to Base Case'), gp=gpar(cex=1.25)))
 gs[8] <- leg
 gs[9:11] <- p
 grid.arrange(grobs = gs, layout_matrix = lay)
