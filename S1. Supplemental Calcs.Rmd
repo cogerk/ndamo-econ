@@ -6,6 +6,9 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+### Model Assumptions
+The effect of pH and temperature were not considered in this analysis.
+
 
 ### Definitions & Input Parameter
 *Z* represents a constituent (N for total nitrogen, COD for chemical oxygen demand, O2 for ozygen, etc.) and *Y* represents an organism (AOB for ammonium oxidizing bacteria, NOB for nitite oxidizing bacteria, etc.)

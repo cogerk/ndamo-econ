@@ -19,7 +19,7 @@ CO2eq_CH4 <<- 35
 sCOD_DENIT <<- 5 # gCOD/gN, gCOD required per gN eaten by denitrifiers
 sO2_AOB <<- 1.5 # Oxygen stoich coeff AOB 
 sO2_NOB <<- 0.5 # Oxygen stoich coeff NOB
-sCH4_NDAMO <<- 0.635 # stoich coeff of methane/nitrate for NDAMO    
+sCH4_NDAMO <<- 0.25 # stoich coeff of methane/nitrate for NDAMO    
 
 # Temperature, Pressure, and pH impacts are largely not relevant to this model. 
 T.mainstream <<- 25 # Degrees C, assumed
