@@ -32,13 +32,14 @@ R <- 0.082057338 # Universal Gas Constant, m3 atm/ kmol/K
 vol.1molgas <- R * (T.digester + 273.15) / P
 
 # Sludge production Factors
-fx_AnMBR <<- 0.036   # gCOD/gCOD, gCOD of sludge produced in AnMBR per gCOD eaten
-fx_DENIT <<- 0.32    # gCOD/gCOD, gCOD of sludge produced per gCOD eaten by denitrifiers
-fx_HET <<- 0.21      # gCOD/gCOD, gCOD of sludge produced per gCOD eaten by COD oxidizing heterotrophs
-fx_AOB <<- 0.11      # gCOD/gN, gCOD of sludge produced per gN eaten by AOB
-fx_NOB <<- 0.036     # gCOD/gN, gCOD of sludge produced per gN eaten by NOB
-fx_anamx <<- 0.13    # gCOD/gN, gCOD of sludge produced per gN eaten by anammox
-fx_NDAMO <<- 0.22    # gCOD/gCH4,	gCOD of sludge produced per gCH4 eaten by NDAMO.
+Y_AnMBR <<- 0.036   # gCOD/gCOD
+Y_DENIT <<- 0.32    # gCOD/gCOD
+Y_HET <<- 0.21      # gCOD/gCOD
+Y_AOB <<- 0.11      # gCOD/gN
+Y_NOB <<- 0.036     # gCOD/gN
+Y_anamx <<- 0.13    # gCOD/gN
+Y_NDAMO <<- 0.22    # gCOD/gCH4
+Y_MOB <<- 0.19      # gCOD/gCOD
 
 # Digester & CO2 Production
 x_digester <<- 0.59 # Assumed digester sludge conversion

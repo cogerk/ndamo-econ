@@ -12,21 +12,21 @@ MLE <- function(df) {
   # Denitrification
   temp$COD_reqd <- temp$LN * sCOD_DENIT # ammt of COD req'd.
   temp$COD_bal <- temp$COD_reqd-temp$LCOD
-  temp$px.DENIT <- fx_DENIT * temp$COD_reqd
+  temp$px.DENIT <- Y_DENIT * temp$COD_reqd
   temp$COD_added <- 0
   temp$COD_added[which(temp$COD_bal>0)] <- temp$COD_bal[which(temp$COD_bal>0)]
   # If not all COD is denitrified, oxidize the rest with heterotrophs.
   temp$O2.HET <- rep(0, times=nrow(temp))
   temp$O2.HET[which(temp$COD_bal<0)] <-  -temp$COD_bal[which(temp$COD_bal<0)]
   temp$px.HET <- 0 
-  temp$px.HET[which(temp$COD_bal<0)] <-  -temp$COD_bal[which(temp$COD_bal<0)] * n_conv * fx_HET
+  temp$px.HET[which(temp$COD_bal<0)] <-  -temp$COD_bal[which(temp$COD_bal<0)] * n_conv * Y_HET
   temp$CO2.HET <- (temp$LCOD + temp$COD_added) * sCO2_HET #CO2 produced
   
   # Oxygen Demand/Sludge Handling (Universal)
   temp$O2.AOB <- (fN_AOB * temp$LN) / MW_N * MW_O2 * sO2_AOB # kg/D O2 req'd by AOB
   temp$O2.NOB <- (fN_NOB * temp$LN) / MW_N * MW_O2 * sO2_NOB # kg/D O2 req'd by NOB
-  temp$px.AOB <- fN_AOB * fx_AOB * n_conv * temp$LN #kg/d, sludge produced from AOB
-  temp$px.NOB <- fN_NOB * fx_NOB * n_conv * temp$LN #kg/d, sludge produced from NOB
+  temp$px.AOB <- fN_AOB * Y_AOB * n_conv * temp$LN #kg/d, sludge produced from AOB
+  temp$px.NOB <- fN_NOB * Y_NOB * n_conv * temp$LN #kg/d, sludge produced from NOB
   temp$px.TOT <- rowSums(dplyr::select(temp, starts_with('px'))) #kg/d, total sludge produced
                      
   # Anaerobic Digester

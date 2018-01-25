@@ -1,16 +1,23 @@
 ---
-title: "SI 1. Sample Calculations"
+title: "Supplemental Material 1. Model Calculations"
 output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
 ### Model Assumptions
-The effect of pH and temperature were not considered in this analysis.
+- The effect of pH and temperature were not considered in this analysis. Therefore:
+  - 100% Nitrogen Removal is achieved in scenarios A, C, & D.
+  - Maximum nitrogen removal (limited by anabolic production of nitrate by anammox) is achieved in scenario B.
+  - 100% COD removal in all scenarios is achieved
+- 59% of sludge by weight is reduced in in the anaerobic digester in scenarios A, B, and C $x_digester$. [1]
+- 62% of biogas by volume is is $CH_4$ ($x_{biogas_CH4}$) and 38% of biogas by volume is $CO_2$ ($x_{biogas_CO2}$). [1]
+- Autotrophic consumption of $CO_2$ is negligible.
+- Aerobic Methanogens are only active when methane concentration exceeds 5 mgCOD/L. At that point they remove 90% of methane present [8]
 
-
-### Definitions & Input Parameter
+### Definitions & Input Parameters
 *Z* represents a constituent (N for total nitrogen, COD for chemical oxygen demand, O2 for ozygen, etc.) and *Y* represents an organism (AOB for ammonium oxidizing bacteria, NOB for nitite oxidizing bacteria, etc.)
 
 $Q$, Total daily volume into the wastewater treatment plant, million Liters/day 
@@ -24,21 +31,21 @@ $MW_Z$, Molecular weight of *Z*
 
 $S_{Z_Y}$, Stoichiometric coefficient of *Z* in metabolism of organism *Y*
 
-$f_{x_Y}$, Sludge production of organism *Y* 
+$Y_{x_Y}$, Sludge production of organism *Y* 
 
-| Process                            | $S_{Z_{Y}}$           | $f_{x_Y}$           |
+| Process                            | $S_{Z_{Y}}$           | $Y_{x_Y}$           |
 | ---------------------------------- | --------------------- | ------------------- |
 | Heterotrophic Denitrification [1]  | 5      gCOD/gN        | 0.32  gCOD/gCOD     |
 | Heterotrophic Oxidation [1]        | 1      g$O_2$/gCOD    | 0.21  gCOD/gCOD     |
 | Ammonium Oxidation [1]             | 1.5    mol$O_2$/molN  | 0.11  gCOD/gN       |
 | Nitrite Oxidation [1]              | 0.5    mol$O_2$/molN  | 0.036  gCOD/gN      |
 | Anammox [1]                        | N/A                   | 0.13  gCOD/gN       |
-| n-DAMO  [2],[3]                    | 0.625  mol$CH_4$/molN | 0.22  gCOD/g$CH_4$  |
+| N-damo  [2],[3]                    | 0.625  mol$CH_4$/molN | 0.22  gCOD/g$CH_4$  |
 | Anaerobic Membrane [4]             | N/A                   | 0.036  gCOD/gCOD    |
+| Aerobic Methane Oxidation [8]      | 16     g$O_2$/gCOD    | 0.19 gCOD/gCOD      |
 
 $n=1.48$, gVSS/gCOD, conversion constant [5]
-$x_digester$ = 59%, fraction sludge reduction in the anaerobic digester [1]
-$x_{biogas_CH4}$ = 62%, Typical concentration of $CH_4$ in biogas [1]
+
 $s_CO2_HET$ = 0.08, kgCO2/kg COD, $CO_2$ respired by heterotrophic organisms on COD basis [6]
 
 ```{r, echo=FALSE}
@@ -152,19 +159,19 @@ $$L_{COD_{in}}= C_{COD_{in}}\times Q$$
 #### Step 2a) Scenario A (MLE System) calculations 
 ** i. Nitrification **
   In traditional MLE, all nitrogen undergoes complete nitrification, so there is 100% conversion by AOB and NOB.
-$$f_{N_{AOB}}=f_{N_{NOB}}=1$$
+$$Y_{N_{AOB}}=Y_{N_{NOB}}=1$$
 ```{r}
   fN_AOB <- data.frame(A=1) # wt%, fraction of total N in converted by AOB, see appendix , assumed 100% in MLE system
   fN_NOB <- data.frame(A=fN_AOB$A)  # wt%, frac of totN converted by NOB, assumed 100% in MLE system
 ```
 ** ii. Denitrification **  
   COD required for denitrification is then calculated based on nitrogen into the system:
-$$COD_{req'd}=L_{N}\times f_{COD/HET}$$
+$$COD_{req'd}=L_{N}\times Y_{COD/HET}$$
 	And compared to the total COD available to determine if external COD addition is required or if there is some COD left after treatment:
 $$COD_{bal}= COD_{req'd}-L_{COD}$$
 
   Sludge production due to heterotrophs involved in denitrification is calculated as follows:
-$$p_{x_{HET}} = COD_{req'd}\times n \times f_{x_{HET}} $$
+$$p_{x_{HET}} = COD_{req'd}\times n \times Y_{x_{HET}} $$
 ```{r}
 (COD_reqd <- LN * fCOD_HET) # ammt of COD req'd.
 (COD_bal <- data.frame(A=COD_reqd - LCOD)
@@ -174,9 +181,9 @@ px_HET <- data.frame(A=COD_reqd * n * fx_HET) #Slude produced
 #### Step 2b) Scenario B (CANON Anammox) calculations 
 ** i. COD Removal **  
   Anammox are an autotrophic organism that does not require organic carbon.  Therefore, a high-rate BOD removal system is required. 100% conversion is assumed in this scenario.
-$$f_{COD_{HET}}=1$$
+$$Y_{COD_{HET}}=1$$
 As per the definition of chemical oxygen demand, the O2 demand from the highrate system is calculated as:
-$$f_{COD_{HET}} \times L_{COD}$$
+$$Y_{COD_{HET}} \times L_{COD}$$
 
 This heterotrophic process does not require any COD addition
 
@@ -189,10 +196,10 @@ fCOD_HET <- data.frame(A=NA, B=1) # Assume 100% conversion of COD
 ** ii. CANON Anammox system **
 It is assumed that partial nitrifcation occurs at a ratio that is ideal for anammox removal, that is for the anammox reaction:
 $$1 NH_4^+ + 1.3NO_2^- \rightarrow 1N_2 + 0.3 NO_3^- [7]$$
-$$f_{N_{AOB}} = \frac{s_{{NO_2^-}_{amx}}}{s_{{NO_2^-}_{amx}}+s_{{NH_4^+}_{amx}}} =\frac{1.3}{1.3+1}=0.57$$
-$$f_{N_{NOB}} = 0$$
+$$Y_{N_{AOB}} = \frac{s_{{NO_2^-}_{amx}}}{s_{{NO_2^-}_{amx}}+s_{{NH_4^+}_{amx}}} =\frac{1.3}{1.3+1}=0.57$$
+$$Y_{N_{NOB}} = 0$$
 Assume, with a stoichiometric feed into the CANON reactor, assume anammox will convert 100% of nitrogen.
-$$f_{NH_{4_{AMX}}} = 1$$
+$$Y_{NH_{4_{AMX}}} = 1$$
 
 ```{r}
   fN_AOB <- 0.57, # wt%, fraction of total N in converted by AOB, 
@@ -215,10 +222,10 @@ $$+$$
 $$1.3 NO_3^- \rightarrow + 1.3 NO_2^-$$ 
 $$Anammox/NDAMO \space Overall: 1 NH_4^+ + 1 NO_3^- \rightarrow 1 N_2 $$
 Therefore, the conversion by AOB & NOB is:
-$$f_{N_{AOB}}=f_{N_{NOB}}=\frac{s_{{NO_2^-}_{amx/ndamo}}}{s_{{NO_2^-}_{amx/ndamo}}+s_{{NH_4^+}_{amx/ndamo}}}=\frac{1}{1+1}=0.5$$
+$$Y_{N_{AOB}}=Y_{N_{NOB}}=\frac{s_{{NO_2^-}_{amx/ndamo}}}{s_{{NO_2^-}_{amx/ndamo}}+s_{{NH_4^+}_{amx/ndamo}}}=\frac{1}{1+1}=0.5$$
 Total conversion by n-damo is 130% and total conversion by anammox is 100% due to the multiplying factors used in finding the overall reaction.
-$$f_{N_{ndamo}}=1.3$$
-$$f_{N_{amx}}=1$$
+$$Y_{N_{ndamo}}=1.3$$
+$$Y_{N_{amx}}=1$$
 
 
 
@@ -226,7 +233,7 @@ $$f_{N_{amx}}=1$$
 
 Unlike the CANON system, The nitrification system is assumed to have 100% nitratation by NOB.
 
-$$f_{N_{AOB}} = f_{N_{NOB}} = 1 - 0.485$$
+$$Y_{N_{AOB}} = Y_{N_{NOB}} = 1 - 0.485$$
 
 ```{r}
   fN_AOB = 1 - 0.485, # wt%, fraction of total N in converted by AOB, see appendix
@@ -238,9 +245,9 @@ $$f_{N_{AOB}} = f_{N_{NOB}} = 1 - 0.485$$
 
 #### Step 3) Non-scenario dependent calculations
 Oxygen demand of a given nitrifying aerobic organism is calculated as:
-$$O_{2_Y}=\frac{f_{N_Y}\times L_N}{MW_N}\times S_{O_{2_Y}}×MW_{O_2}$$
+$$O_{2_Y}=\frac{Y_{N_Y}\times L_N}{MW_N}\times S_{O_{2_Y}}×MW_{O_2}$$
 Sludge production due to a given organism (*Y*) consuming a given contaminent (*Z*) is calculated as: 
-$$p_{x_Y}=f_{Z_Y}×f_{x_Y} \times n\times L_Z$$
+$$p_{x_Y}=Y_{Z_Y}×Y_{x_Y} \times n\times L_Z$$
 * With the exception of $p_{x_{HET}}$ in scenario A, calculated as per above
 
 ```{r}
@@ -265,13 +272,13 @@ $$p_{x_{TOT}} = \Sigma p_{x_y}$$
 
 #### Step 4a,b & c) Anaerobic Digester Calculations
   In scenarios A, B, and C, there is an anaerobic sludge digester reducing the total amount of sludge requiring handling.  In scenario D, this task is effectively done by the AnMBR.
-  A typical anaerobic digester sludge reduction factor $f_{x_{digester}} = $ is used to calculate actual sludge out of the system requiring handling:
-$$p_{x_{out}}=p_{x_{TOT}}\times(1-f_{x_{digester}})$$
+  A typical anaerobic digester sludge reduction factor $Y_{x_{digester}} = $ is used to calculate actual sludge out of the system requiring handling:
+$$p_{x_{out}}=p_{x_{TOT}}\times(1-Y_{x_{digester}})$$
 	The COD of the digested sludge is converted to methane:
-$$CH_{4_{prod}} =  \frac{p_{x_{TOT}}-p_{x_{out}}}{n}\times f_{CH_4/COD}$$
+$$CH_{4_{prod}} =  \frac{p_{x_{TOT}}-p_{x_{out}}}{n}\times Y_{CH_4/COD}$$
 ```{r}
   (px_out <- px_TOT * (1 - fx_digester))
-  (CH4prod <- (px_TOT - px_out)/n * f_CH4_COD) #m3 CH4 produced/day calculated as a mass balance
+  (CH4prod <- (px_TOT - px_out)/n * Y_CH4_COD) #m3 CH4 produced/day calculated as a mass balance
   (LCH4 <- data.frame(A=0, B=0))
 ```
 
@@ -303,3 +310,4 @@ ${CH_{4_{PROD}}}$ The m$^3$ of CH$_4$ produced for energy recovery is in step 4 
 [5]	G. v R. Marais and G. A. Ekama, “The activated sludge process – Part 1: Steady state behaviour,” WATER SA, vol. 2, no. 4, 1976.
 [6]	J. L. Campos, D. Valenzuela-Heredia, A. Pedrouso, A. Val del Río, M. Belmonte, and A. Mosquera-Corral, “Greenhouse Gases Emissions from Wastewater Treatment Plants: Minimization, Treatment, and Prevention,” J. Chem., vol. 2016, pp. 1–12, Apr. 2016.
 [7] Van der Star....
+[8] Daelman methane paper
