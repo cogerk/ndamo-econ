@@ -41,6 +41,7 @@ Y_anamx <<- 0.13    # gCOD/gN
 Y_NDAMO <<- 0.22    # gCOD/gCH4
 Y_MOB <<- 0.19      # gCOD/gCOD
 
+
 # Digester & CO2 Production
 x_digester <<- 0.59 # Assumed digester sludge conversion
 x_biogas_CH4 <<- 0.62 # Typical concentration of CH4 in biogas

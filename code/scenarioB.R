@@ -10,7 +10,7 @@ anamx <- function(df){
   temp$px.HET <- fCOD_HET * temp$LCOD * Y_HET * n_conv # Biomass produced/d
   temp$O2.HET <- fCOD_HET * temp$LCOD # O2 demand in A Stage
   temp$CO2.HET <- temp$LCOD * sCO2_HET #CO2 produced
-  
+  0.
   # Nitrification
   fN_AOB <- 1.3/2.3 # wt%, fraction of total N in converted by AOB, see appendix
   fN_NOB <- 0  # wt%, frac of totN converted by NOB, assumed 100% in anammox system # Make temp dependent?
@@ -41,7 +41,7 @@ anamx <- function(df){
   
   
   df$scenario <- rep('B', times=nrow(temp))
-  df$COD.added<- 0
+  df$COD.added <- 0
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
   df$CH4.dissolved <- temp$LCH4

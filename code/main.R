@@ -9,10 +9,12 @@ library(grid)
 
 #== Set up conditions to run
 Nmax <- 60
+Nmin <- 2
 CODmax <- 400
+CODmin <- 30
 Qmax <- 600
-cNin <- seq(Nmax*.001, Nmax, length=100) # Nitrogen concentration varies
-cCODin <- seq(CODmax*.001, CODmax, length=100) # Carbon concentration varies
+cNin <- seq(Nmin, Nmax, length=100) # Nitrogen concentration varies
+cCODin <- seq(CODmin, CODmax, length=100) # Carbon concentration varies
 Q <- 60 # constant flow rate
 
 #== Run simultions
@@ -57,7 +59,7 @@ p <- list()
 
 
 #= Plot Oxygen Demand
-png('code/figures/O2 Demand.png', width=8.5, height=3, units='in', res=500)
+png('code/figures/O2 Demand.png', width=8.5, height=3.3, units='in', res=500)
 fig.no <- 3
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, O2.demand)
