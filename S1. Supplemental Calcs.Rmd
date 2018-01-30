@@ -12,10 +12,13 @@ knitr::opts_chunk$set(echo = FALSE)
   - 100% Nitrogen Removal is achieved in scenarios A, C, & D.
   - Maximum nitrogen removal (limited by anabolic production of nitrate by anammox) is achieved in scenario B.
   - 100% COD removal in all scenarios is achieved
+- All COD sent to the anaerobic digestion process is converted to methane gas.
 - 59% of sludge by weight is reduced in in the anaerobic digester in scenarios A, B, and C $x_digester$. [1]
 - 62% of biogas by volume is is $CH_4$ ($x_{biogas_CH4}$) and 38% of biogas by volume is $CO_2$ ($x_{biogas_CO2}$). [1]
 - Autotrophic consumption of $CO_2$ is negligible.
 - Aerobic Methanogens are only active when methane concentration exceeds 5 mgCOD/L. At that point they remove 90% of methane present [8]
+
+
 
 ### Definitions & Input Parameters
 *Z* represents a constituent (N for total nitrogen, COD for chemical oxygen demand, O2 for ozygen, etc.) and *Y* represents an organism (AOB for ammonium oxidizing bacteria, NOB for nitite oxidizing bacteria, etc.)
