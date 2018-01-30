@@ -1,10 +1,10 @@
 #=== main.R
 #== Load necessary files 
 source('code/masterrun.R')
-library(latticeExtra)
-library(gridExtra)
-library(ggplot2)
-library(grid)
+require(latticeExtra)
+require(gridExtra)
+require(ggplot2)
+require(grid)
 
 
 #== Set up conditions to run
@@ -30,10 +30,12 @@ lattice.options(layout.widths = lw, layout.heights = lh)
 # Set up labels
 col.labels <- c('-100%', '-50%', '0%','50%','100%')
 col.labels.ext1 <- c('-100%', '0%', '100%','200%','300%','400%','>500%')
+col.labels.ext2 <- c('-100%', '-50%', '0%','50%','100%','150%')
 col.labels.low <- c('-100%', '-95%', '-50%', '0%','50%','100%')
 col.percent <- colorRampPalette(c('blue', 'white', 'red'))
 col.percent.low <- colorRampPalette(c('blue', 'lightblue', 'white', 'red'))
-col.percent.ext <- colorRampPalette(c('blue', 'white', 'red', 'darkred'))
+col.percent.ext1 <- colorRampPalette(c('blue', 'white', 'red', 'darkred'))
+col.percent.ext2 <- colorRampPalette(c('blue', 'white', 'red', 'red3'))
 ys <-list(at=seq(0,CODmax, by=50), labels=rep('', length(seq(0,CODmax, by=10))))
 xs <- list(at=seq(15,Nmax, by=15), labels=seq(15,Nmax, by=15))
 xs_0 <- list(at=seq(0,Nmax, by=15), labels=seq(0,Nmax, by=15))
@@ -107,13 +109,13 @@ for (i in 1:(length(result)-1)) {
                         panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
                         panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
                       },
-                      at=seq(-1,1,by=.01), col.regions=col.percent, 
+                      at=c(seq(-1,1, length=100),seq(1+.01, 1.5, length=50)), col.regions=col.percent.ext2, 
                       xlab="", ylab="",
                       scales=list(cex=1, tck = c(1,0), 
                                   x=xs,
                                   y=ys),
                       colorkey = list(labels=list(cex=1, 
-                                                  labels=col.labels)))  
+                                                  labels=col.labels.ext2)))  
   leg.list <- p[[i]]$legend$right$args$key
   leg.list$cex <- 1.5
   leg <-  grob(draw.colorkey(leg.list))
@@ -158,7 +160,7 @@ for (i in 1:(length(result)-1)) {
   p[[i]] <- update(p[[i]], legend=NULL)
 }
 
-# Assign O2 Demand graphs to layout
+# Assign graphs to layout
 gs[7] <- grob(textGrob(expression('External Carbon Addition w/ respect to Base Case'), gp=gpar(cex=1.25)))
 gs[8] <- leg
 gs[9:11] <- p
@@ -181,7 +183,7 @@ for (i in 1:(length(result)-1)) {
                         panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
                       },
                       at=c(seq(-1,1, length=100),seq(1+.01, 5, length=50)),
-                      col.regions=col.percent.ext, 
+                      col.regions=col.percent.ext1, 
                       xlab="", ylab="",
                       scales=list(cex=1, tck = c(1,0), 
                                   x=xs,
@@ -194,7 +196,7 @@ for (i in 1:(length(result)-1)) {
   p[[i]] <- update(p[[i]], legend=NULL)
 }
 
-# Assign Methane Production graphs to layout
+# Assign graphs to layout
 gs[7] <- grob(textGrob(expression('Methane Production w/ respect to Base Case'), gp=gpar(cex=1.25)))
 gs[8] <- leg
 gs[9:11] <- p

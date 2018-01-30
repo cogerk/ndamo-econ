@@ -38,8 +38,8 @@ $Y_{x_Y}$, Sludge production of organism *Y*
 
 | Process                            | $S_{Z_{Y}}$           | $Y_{x_Y}$           |
 | ---------------------------------- | --------------------- | ------------------- |
-| Heterotrophic Denitrification [1]  | 5      gCOD/gN        | 0.32  gCOD/gCOD     |
-| Heterotrophic Oxidation [1]        | 1      g$O_2$/gCOD    | 0.21  gCOD/gCOD     |
+| Heterotrophic Denitrification [1]  | 5      gCOD/gN        | 0.30  gVSS/gCOD     |
+| Heterotrophic Oxidation [1]        | 1      g$O_2$/gCOD    | 0.45  gVSS/gCOD     |
 | Ammonium Oxidation [1]             | 1.5    mol$O_2$/molN  | 0.11  gCOD/gN       |
 | Nitrite Oxidation [1]              | 0.5    mol$O_2$/molN  | 0.036  gCOD/gN      |
 | Anammox [1]                        | N/A                   | 0.13  gCOD/gN       |

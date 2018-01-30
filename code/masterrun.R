@@ -1,5 +1,5 @@
 # Run all scenarios for given inputs 
-library(tidyverse)
+require(tidyverse)
 source(file = 'code/scenarioA.R')
 source(file = 'code/scenarioB.R')
 source(file = 'code/scenarioC.R')
@@ -33,8 +33,8 @@ vol.1molgas <- R * (T.digester + 273.15) / P
 
 # Sludge production Factors
 Y_AnMBR <<- 0.036   # gCOD/gCOD
-Y_DENIT <<- 0.32    # gCOD/gCOD
-Y_HET <<- 0.21      # gCOD/gCOD
+Y_DENIT <<- 0.30/n_conv    # gCOD/gCOD
+Y_HET <<- 0.45/n_conv      # gCOD/gCOD
 Y_AOB <<- 0.11      # gCOD/gN
 Y_NOB <<- 0.036     # gCOD/gN
 Y_anamx <<- 0.13    # gCOD/gN
