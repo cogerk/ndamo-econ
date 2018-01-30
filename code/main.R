@@ -51,7 +51,7 @@ fig.labels <- c('.1', '.2', '.3')
 
 # Set up plot layout
 lay <- rbind(rep(7, times=20),
-             c(6,5,rep(12:14,each=5), 8, 8, 8),
+             c(15,15,rep(12:14,each=5), 8, 8, 8),
              c(6,5,rep(1:3,each=5), 8, 8, 8),
              matrix(rep(c(6,5,rep(9:11, each=5),rep(8, times=3)),times=6), 
                     nrow=6, 
