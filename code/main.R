@@ -43,9 +43,9 @@ gs <- list()
 gs[1] <- grob(textGrob('CANON vs. MLE'))
 gs[2] <- grob(textGrob(c('anammox/n-damo', 'vs. MLE'), y=c(0.8,0.33)))
 gs[3] <- grob(textGrob(c('anammox/n-damo/AnMBR','vs. MLE'), y=c(0.8,0.33)))
-gs[4] <- grob(textGrob('Total Nitrogen Concentration in Influent, mg/L'))
+gs[4] <- grob(textGrob('Nitrogen in Influent, mg/L'))
 gs[5] <- grob(textGrob(seq(0,CODmax, by=50), y=seq(0.12, .85, length.out = 8), x=.75, just='right'))
-gs[6] <- grob(textGrob('COD Concentration in Influent, mg/L', rot=90))
+gs[6] <- grob(textGrob('COD in Influent, mg/L', rot=90))
 fig.labels <- c('.1', '.2', '.3')
 
 
@@ -62,7 +62,7 @@ p <- list()
 
 #= Plot Oxygen Demand
 png('code/figures/O2 Demand.png', width=8.5, height=3.3, units='in', res=500)
-fig.no <- 3
+fig.no <- 2
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, O2.demand)
   if (i > 1) {x_tck <- xs} else {x_tck <- xs_0}
@@ -100,7 +100,7 @@ dev.off()
 
 #= Plot Sludge Production 
 png('code/figures/Sludge Production.png', width=8.5, height=3, units='in', res=500)
-fig.no <- 4
+fig.no <- 3
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, sludge.out)
   p[[i]] <- levelplot(sludge.out ~ Nitrogen * Carbon, data=d,
@@ -172,7 +172,7 @@ dev.off()
 
 #= Plot Methane Production
 png('code/figures/Methane Production.png', width=8.5, height=3, units='in', res=500)
-fig.no <- 5
+fig.no <- 4
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, CH4.toburn)
   d$CH4.toburn[d$CH4.toburn>5] <- 5
