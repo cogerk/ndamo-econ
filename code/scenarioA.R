@@ -38,6 +38,7 @@ MLE <- function(df) {
   temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced
   temp$px.OUT <- temp$px.TOT * (1-fx_digester)
   temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
+  temp$V.biogas <- temp$CH4prod / rho_CH4.dig / x_biogas_CH4
   temp$V.CO2.digester <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$V.CO2.digester / V.molgas.digester * MW_CO2
   temp$CO2.burn <- temp$CH4prod * sCO2_BURN * MW_CO2 / MW_CH4
