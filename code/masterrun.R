@@ -13,7 +13,7 @@ MW_N <<- 14
 CH4_COD <<- 4
 n_conv <<- 1.48          # gVSS/gCOD, conversion constant
 H <- 0.0015 # Henry's Constant for methane
-CO2eq_CH4 <<- 35 
+CO2eq_CH4 <<- 34 
 
 # Stoichiometry
 sCOD_DENIT <<- 5 # gCOD/gN, gCOD required per gN eaten by denitrifiers
@@ -22,33 +22,36 @@ sO2_NOB <<- 0.5 # Oxygen stoich coeff NOB
 sCH4_NDAMO <<- 0.25 # stoich coeff of methane/nitrate for NDAMO    
 
 # Temperature, Pressure, and pH impacts are largely not relevant to this model. 
-T.mainstream <<- 25 # Degrees C, assumed
+T.mainstream <<- 20 # Degrees C, assumed
 T.digester <<- 37 # Degrees C, assumed
-pH <<- 7
 P <<- 1 # atm, assumed
 
 # Ideal Gas Law
 R <- 0.082057338 # Universal Gas Constant, m3 atm/ kmol/K
-vol.1molgas <- R * (T.digester + 273.15) / P
+V.molgas.digester <- R * (T.digester + 273.15) / P
+V.molgas.main <- R * (T.mainstream + 273.15) / P
 
 # Sludge production Factors
 Y_AnMBR <<- 0.036   # gCOD/gCOD
 Y_DENIT <<- 0.30/n_conv    # gCOD/gCOD
 Y_HET <<- 0.45/n_conv      # gCOD/gCOD
-Y_AOB <<- 0.11      # gCOD/gN
-Y_NOB <<- 0.036     # gCOD/gN
-Y_anamx <<- 0.13    # gCOD/gN
-Y_NDAMO <<- 0.22    # gCOD/gCH4
+Y_AOB <<- 0.12/n_conv      # gCOD/gN
+Y_NOB <<- 0.05/n_conv      # gCOD/gN
+Y_anamx <<- 0.13/n_conv    # gCOD/gN
+Y_NDAMO <<- 0.071    # gCOD/gCOD
 Y_MOB <<- 0.19      # gCOD/gCOD
 
 
 # Digester & CO2 Production
-x_digester <<- 0.59 # Assumed digester sludge conversion
+fx_digester <<- 0.59 # Assumed digester sludge conversion
 x_biogas_CH4 <<- 0.62 # Typical concentration of CH4 in biogas
+x_biogas_CO2 <<- 1-x_biogas_CH4 # Typical concentration of CH4 in biogas
 sCO2_HET <<- 0.08 # kgCO2/kg COD
 sCO2_NDAMO <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
 sCO2_BURN <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
-rho_CH4 <<- MW_CH4 / vol.1molgas #kg/m3
+rho_CH4.dig <<- MW_CH4 / V.molgas.digester #kg/m3
+rho_CH4.main <<- MW_CH4 / V.molgas.main
+N_cent <<- 0.25
 
 scenarios <- function(Q, cNin, cCODin, 
                       compare=TRUE, expand=TRUE){
@@ -60,11 +63,6 @@ scenarios <- function(Q, cNin, cCODin,
     df <- data.frame(Flowrate=Q, Nitrogen=cNin, Carbon=cCODin)
   }
   
-  #== Loading Calculations
-  LNin <- df$Flowrate * df$Nitrogen #kgN/d, Nitrogen load per day
-  LNcent <- .4 * LNin #kgN/d, Nitrogen load from centrate, assumed 40% of total load
-  df$LN <- LNin + LNcent #kgN/d, total nitrogen load
-  df$LCOD <- df$Flowrate * df$Carbon #kgCOD/d, COD load per day
 
   #== Run Scenarios 
   df.A <- MLE(df)

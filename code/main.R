@@ -11,7 +11,7 @@ require(grid)
 Nmax <- 60
 Nmin <- 2
 CODmax <- 400
-CODmin <- 30
+CODmin <- 0.01
 Qmax <- 600
 cNin <- seq(Nmin, Nmax, length=100) # Nitrogen concentration varies
 cCODin <- seq(CODmin, CODmax, length=100) # Carbon concentration varies
@@ -174,9 +174,9 @@ dev.off()
 png('code/figures/Methane Production.png', width=8.5, height=3, units='in', res=500)
 fig.no <- 4
 for (i in 1:(length(result)-1)) {
-  d <- select(result[[i+1]], Nitrogen, Carbon, CH4.toburn)
-  d$CH4.toburn[d$CH4.toburn>5] <- 5
-  p[[i]] <- levelplot(CH4.toburn ~ Nitrogen * Carbon, data=d,
+  d <- select(result[[i+1]], Nitrogen, Carbon, CH4.burn)
+  d$CH4.burn[d$CH4.burn>5] <- 5
+  p[[i]] <- levelplot(CH4.burn ~ Nitrogen * Carbon, data=d,
                       panel = function(...){
                         panel.levelplot(...)
                         panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
@@ -220,7 +220,7 @@ for (i in 1:(length(result)-1)) {
                         panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
                       },
                       at=c(seq(-1,1, length=100),seq(1+.01, 5, length=50)),
-                      col.regions=col.percent.ext, 
+                      col.regions=col.percent.ext1, 
                       xlab="", ylab="",
                       scales=list(cex=1, tck = c(1,0), 
                                   x=xs,

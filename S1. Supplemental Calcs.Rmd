@@ -6,6 +6,16 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+The following document is intended to describe in the models created for the four carbon and nitrogen removal scenarios (Modified Luzak-Ettinger, CANON, anammox-n-damo, and anammox-n-damo-AnMBR):
+![Figure 1](code/figures/Scenarios.pdf)
+
+
+The following key metrics are returned from these models:
+- Total oxygen demand
+- Sludge discharge volume
+- Methane available for energy recovery
+- External Carbon Addition Required
+- Greenhouse Gas Emissions
 
 ### Model Assumptions
 - The effect of pH and temperature were not considered in this analysis. Therefore:
@@ -15,13 +25,13 @@ knitr::opts_chunk$set(echo = FALSE)
 - All COD sent to the anaerobic digestion process is converted to methane gas.
 - 59% of sludge by weight is reduced in in the anaerobic digester in scenarios A, B, and C $x_digester$. [1]
 - 62% of biogas by volume is is $CH_4$ ($x_{biogas_CH4}$) and 38% of biogas by volume is $CO_2$ ($x_{biogas_CO2}$). [1]
+- Centrate from the anaerobic digester is returned to the mainstream from treatment and is assumed to contain 25% of the total nitrogen load. [1]
 - Autotrophic consumption of $CO_2$ is negligible.
-- Aerobic Methanogens are only active when methane concentration exceeds 5 mgCOD/L. At that point they remove 90% of methane present [8]
-
+- Aerobic Methanogens are only active when methane concentration exceeds 5 mgCOD/L. At that point they remove 90% of methane present. [8]
 
 
 ### Definitions & Input Parameters
-*Z* represents a constituent (N for total nitrogen, COD for chemical oxygen demand, O2 for ozygen, etc.) and *Y* represents an organism (AOB for ammonium oxidizing bacteria, NOB for nitite oxidizing bacteria, etc.)
+*Z* represents a constituent (N for total nitrogen, COD for chemical oxygen demand, O2 for oxygen, etc.) and *Y* represents an organism (AOB for ammonium oxidizing bacteria, NOB for nitite oxidizing bacteria, etc.)
 
 $Q$, Total daily volume into the wastewater treatment plant, million Liters/day 
 
@@ -36,16 +46,17 @@ $S_{Z_Y}$, Stoichiometric coefficient of *Z* in metabolism of organism *Y*
 
 $Y_{x_Y}$, Sludge production of organism *Y* 
 
-| Process                            | $S_{Z_{Y}}$           | $Y_{x_Y}$           |
-| ---------------------------------- | --------------------- | ------------------- |
-| Heterotrophic Denitrification [1]  | 5      gCOD/gN        | 0.30  gVSS/gCOD     |
-| Heterotrophic Oxidation [1]        | 1      g$O_2$/gCOD    | 0.45  gVSS/gCOD     |
-| Ammonium Oxidation [1]             | 1.5    mol$O_2$/molN  | 0.11  gCOD/gN       |
-| Nitrite Oxidation [1]              | 0.5    mol$O_2$/molN  | 0.036  gCOD/gN      |
-| Anammox [1]                        | N/A                   | 0.13  gCOD/gN       |
-| N-damo  [2],[3]                    | 0.625  mol$CH_4$/molN | 0.22  gCOD/g$CH_4$  |
-| Anaerobic Membrane [4]             | N/A                   | 0.036  gCOD/gCOD    |
-| Aerobic Methane Oxidation [8]      | 16     g$O_2$/gCOD    | 0.19 gCOD/gCOD      |
+| Process                            | $S_{Z_{Y}}$             | $Y_{x_Y}$           |
+| ---------------------------------- | ----------------------- | ------------------- |
+| Heterotrophic Denitrification [1]  | 5      gCOD/gN          | 0.32  gVSS/gCOD     |
+| Heterotrophic Oxidation [1]        | 1      g$O_2$/gCOD      | 0.45  gVSS/gCOD     |
+| Ammonium Oxidation [1]             | 1.5    mol$O_2$/molN    | 0.11  gCOD/gN       |
+| Nitrite Oxidation [1]              | 0.5    mol$O_2$/molN    | 0.036 gCOD/gN       |
+| Anammox [1]                        | N/A                     | 0.13  gCOD/gN       |
+| Anammox [1]                        | N/A    mol$O_2$/molN    |                     |
+| N-damo  [2],[3]                    | 0.625  mol$CH_4$/molN   | 0.22  gCOD/g$CH_4$  |
+| Anaerobic Membrane [4]             | N/A                     | 0.036  gCOD/gCOD    |
+| Aerobic Methane Oxidation [8]      | 16     g$O_2$/gCOD      | 0.19 gCOD/gCOD      |
 
 $n=1.48$, gVSS/gCOD, conversion constant [5]
 
@@ -66,22 +77,18 @@ CO2eq_CH4 <<- 35
 sCOD_HET <<- 5 # gCOD/gN, gCOD required per gN eaten by denitrifiers
 sO2_AOB <<- 1.5 # Oxygen stoich coeff AOB 
 sO2_NOB <<- 0.5 # Oxygen stoich coeff NOB
-sCH4_NDAMO <<- 0.635 # stoich coeff of methane/nitrate for NDAMO    
-
-# Temperature, Pressure, and pH impacts are largely not relevant to this model. 
-T.mainstream <<- 25 # Degrees C, assumed
-T.digester <<- 37 # Degrees C, assumed
-pH <<- 7
-P <<- 1 # atm, assumed
+sCH4_NDAMO <<- 0.25 # stoich coeff of methane/nitrate for NDAMO    
 
 # Ideal Gas Law
+T.digester <<- 37 # Degrees C, assumed
+P <<- 1 # atm, assumed
 R <- 0.082057338 # Universal Gas Constant, m3 atm/ kmol/K
 vol.1molgas <- R * (T.digester + 273.15) / P
 
 # Sludge production Factors
 fx_AnMBR <<- 0.036   # gCOD/gCOD, gCOD of sludge produced in AnMBR per gCOD eaten
-fx_DENIT <<- 0.32    # gCOD/gCOD, gCOD of sludge produced per gCOD eaten by denitrifiers
-fx_HET <<- 0.21      # gCOD/gCOD, gCOD of sludge produced per gCOD eaten by COD oxidizing heterotrophs
+Y_DENIT <<- 0.30/n_conv    # gCOD/gCOD
+Y_HET <<- 0.45/n_conv      # gCOD/gCOD heterotrophs
 fx_AOB <<- 0.11      # gCOD/gN, gCOD of sludge produced per gN eaten by AOB
 fx_NOB <<- 0.036     # gCOD/gN, gCOD of sludge produced per gN eaten by NOB
 fx_anamx <<- 0.13    # gCOD/gN, gCOD of sludge produced per gN eaten by anammox
@@ -94,6 +101,7 @@ sCO2_HET <<- 0.08 # kgCO2/kg COD
 sCO2_NDAMO <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
 sCO2_BURN <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
 rho_CH4 <<- MW_CH4 / vol.1molgas #kg/m3
+R_cent <<- 0.25
 ```
 
 #### Calculated Parameters
@@ -135,26 +143,28 @@ $C_{COD_{in}} = 100\;mgCOD/L$
 
 ```{r}
 Q <- 40 
-t <- 25
 cNin <- 40 
 cCODin <- 100
 ```
 
 #### Step 1) Total Load Calculations
-  First, the total nitrogen load into the system is calculated as the total nitrogen load in the influent plus to the total nitrogen load in the centrate for scenarios A, B & C, all of which have a side stream anaerobic digester.  Scenario D includes a mainstream digester, so there is no centrate and $L_N = L_{N_{in}}$.  However, for the first three scenarios:
 
 $$L_N = L_{N_{in}}+L_{N_{cent}}$$
   Where:
-$$L_{N_{in}}= C_{N_{in}}\times Q$$
-  And where total nitrogen load in the centrate is assumed to be 40% of the total load in the influent, as is typical of wastewater centrate **[cite]**.
-$$L_{N_{cent}}= C_{N_{in}}\times 0.4$$
+$$L_{N_{in}}= C_{N_{in}}\times Q=40 \frac{ML}{day}\times40\frac{kg}{ML}=1600$$
+```{r}
+(LNin <- Q * cNin) #kgN/d, Nitrogen load per day
+```
+  
+  And where total nitrogen load in the centrate is assumed to be 25% of the total load in the influent, as is typical of wastewater centrate [1].
+$$L_{N_{cent}}= C_{N_{in}}\times 0.25$$
   
   
-  Total COD load into the system is also determined as follows:
+  Total COD load into the system for all scenarios is determined as follows:
 $$L_{COD_{in}}= C_{COD_{in}}\times Q$$
 ```{r}
   (LNin <- Q * cNin) #kgN/d, Nitrogen load per day
-  (LNcent <- .4 * LNin) #kgN/d, Nitrogen load from centrate, assumed 40% of total load
+  (LNcent <- .25 * LNin) #kgN/d, Nitrogen load from centrate, assumed 40% of total load
   (LN <- LNin + LNcent) #kgN/d, total nitrogen load
   (LCOD <- Q * cCODin) #kgCOD/d, COD load per day
 ```
@@ -162,22 +172,42 @@ $$L_{COD_{in}}= C_{COD_{in}}\times Q$$
 #### Step 2a) Scenario A (MLE System) calculations 
 ** i. Nitrification **
   In traditional MLE, all nitrogen undergoes complete nitrification, so there is 100% conversion by AOB and NOB.
-$$Y_{N_{AOB}}=Y_{N_{NOB}}=1$$
+$$f_{N_{AOB}}=f_{N_{NOB}}=1$$
 ```{r}
   fN_AOB <- data.frame(A=1) # wt%, fraction of total N in converted by AOB, see appendix , assumed 100% in MLE system
   fN_NOB <- data.frame(A=fN_AOB$A)  # wt%, frac of totN converted by NOB, assumed 100% in MLE system
 ```
-** ii. Denitrification **  
+** ii. Denitrification ** 
   COD required for denitrification is then calculated based on nitrogen into the system:
-$$COD_{req'd}=L_{N}\times Y_{COD/HET}$$
+$$COD_{req'd}=L_{N}\times S_{COD_{DENIT}}$$
 	And compared to the total COD available to determine if external COD addition is required or if there is some COD left after treatment:
 $$COD_{bal}= COD_{req'd}-L_{COD}$$
+$$If:$$
+$$COD_{bal}>0$$
+$$Then:$$
 
-  Sludge production due to heterotrophs involved in denitrification is calculated as follows:
-$$p_{x_{HET}} = COD_{req'd}\times n \times Y_{x_{HET}} $$
+$$COD_{added}=COD_{bal}$$
+$$Else:$$
+$$COD_{added}=0$$
+Plugging in our values:
 ```{r}
-(COD_reqd <- LN * fCOD_HET) # ammt of COD req'd.
-(COD_bal <- data.frame(A=COD_reqd - LCOD)
+(COD.reqd <- LN * sCOD_DENIT) # ammt of COD req'd.
+(COD.bal <- COD_reqd - LCOD)
+if (COD.bal > 0){
+  COD.added <- COD.bal
+}else {
+  COD.added <- 0
+}
+```
+
+It was found that there was enough COD for conversion at all COD/N ratios simulated.
+
+
+Sludge production due to heterotrophs involved in denitrification is calculated as follows:
+$$p_{x_{HET}} = COD_{req'd}\times n \times Y_{x_{HET}}$$
+
+```
+
 px_HET <- data.frame(A=COD_reqd * n * fx_HET) #Slude produced
 ```
 
@@ -202,7 +232,7 @@ $$1 NH_4^+ + 1.3NO_2^- \rightarrow 1N_2 + 0.3 NO_3^- [7]$$
 $$Y_{N_{AOB}} = \frac{s_{{NO_2^-}_{amx}}}{s_{{NO_2^-}_{amx}}+s_{{NH_4^+}_{amx}}} =\frac{1.3}{1.3+1}=0.57$$
 $$Y_{N_{NOB}} = 0$$
 Assume, with a stoichiometric feed into the CANON reactor, assume anammox will convert 100% of nitrogen.
-$$Y_{NH_{4_{AMX}}} = 1$$
+$$f_{NH_{4_{AMX}}} = 1$$
 
 ```{r}
   fN_AOB <- 0.57, # wt%, fraction of total N in converted by AOB, 
