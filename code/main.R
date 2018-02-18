@@ -8,7 +8,6 @@ require(grid)
 require(extrafont)
 
 
-
 #== Set up conditions to run
 Nmax <- 60
 Nmin <- 2
@@ -43,8 +42,8 @@ xs <- list(at=seq(15,Nmax, by=15), labels=seq(15,Nmax, by=15))
 xs_0 <- list(at=seq(0,Nmax, by=15), labels=seq(0,Nmax, by=15))
 gs <- list()
 lab1 <- textGrob('CANON vs. MLE', gp=gpar(fontfamily='serif'))
-lab2 <- textGrob(c('anammox/n-damo', 'vs. MLE'),gp=gpar(fontfamily='serif'), y=c(0.8,0.33))
-lab3 <- textGrob(c('anammox/n-damo/AnMBR','vs. MLE'), gp=gpar(fontfamily='serif'), y=c(0.8,0.33))
+lab2 <- textGrob(c('HRAS/anammox/n-damo', 'vs. MLE'),gp=gpar(fontfamily='serif'), y=c(0.8,0.33))
+lab3 <- textGrob(c('AnMBR/anammox/n-damo','vs. MLE'), gp=gpar(fontfamily='serif'), y=c(0.8,0.33))
 lab4 <- textGrob('Nitrogen in Influent, mg/L', gp=gpar(fontfamily='serif'))
 ax5 <- textGrob(seq(0,CODmax, by=50), y=seq(0.12, .85, length.out = 8), x=.75, just='right', gp=gpar(fontfamily='serif'))
 lab6 <- textGrob('COD in Influent, mg/L', rot=90, gp=gpar(fontfamily='serif'))
@@ -208,7 +207,7 @@ dev.off()
 
 #= Plot GHG Emissions
 png('code/figures/GHG.png', width=8.5, height=3, units='in', res=500)
-fig.no <- 6
+fig.no <- 5
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, CO2.equivs)
   d$CO2.equivs[d$CO2.equivs>5] <- 5
@@ -240,6 +239,12 @@ lab13 <- textGrob(paste(fig.no, fig.labels[2], sep=''), gp=gpar(fontface='bold',
 lab14 <- textGrob(paste(fig.no, fig.labels[3], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
 grid.arrange(grobs = list(lab1,lab2,lab3,lab4,ax5, lab6, lab7, leg8, p[[1]], p[[2]],p[[3]], lab12, lab13, lab14), layout_matrix = lay)
 dev.off()
+
+
+# Define High/Med/Low COD/N ratio
+qqO2.B = quantile(result$B$O2.demand, probs = seq(0, 1, 0.3333))
+qqO2.C = quantile(result$C$O2.demand, probs = seq(0, 1, 0.3333))
+qqO2.D = quantile(result$D$O2.demand, probs = seq(0, 1, 0.3333))
 
 
 
