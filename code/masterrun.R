@@ -4,6 +4,7 @@ source(file = 'code/scenarioA.R')
 source(file = 'code/scenarioB.R')
 source(file = 'code/scenarioC.R')
 source(file = 'code/scenarioD.R')
+source(file = 'code/scenarioE.R')
 
 ### Constants
 MW_O2 <<- 32
@@ -67,8 +68,9 @@ scenarios <- function(Q, cNin, cCODin,
   #== Run Scenarios 
   df.A <- MLE(df)
   df.B <- anamx(df)
-  df.C <- anamx_NDAMO(df)
-  df.D <- anamx_NDAMO_AnMBR(df)
+  df.C <- anamx_AnMBR(df)
+  df.D <- anamx_NDAMO(df)
+  df.E <- anamx_NDAMO_AnMBR(df)
   
   #== Compare all theoretical scenarios to base case MLE if true
   if (compare) {
@@ -76,11 +78,12 @@ scenarios <- function(Q, cNin, cCODin,
     df.B[, c(7:9,11,ncol(df.B))] <- (df.B[, c(7:9,11,ncol(df.B))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
     df.C[, c(7:9,11,ncol(df.C))] <- (df.C[, c(7:9,11,ncol(df.C))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
     df.D[, c(7:9,11,ncol(df.D))] <- (df.D[, c(7:9,11,ncol(df.D))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
-    df.D$COD.added[is.nan(df.D$COD.added)] <- 0
+    df.E[, c(7:9,11,ncol(df.D))] <- (df.E[, c(7:9,11,ncol(df.D))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
+    
   }
   
   
-  return(list(A=df.A, B=df.B, C=df.C, D=df.D))
+  return(list(A=df.A, B=df.B, C=df.C, D=df.D, E=df.E))
 }
 
 
