@@ -1,6 +1,6 @@
 anamx_NDAMO<- function(df){
-# Mass and energy balance for anammox/NDAMO system
-# Kathryn Cogert 12/6/15
+  # Mass and energy balance for anammox/NDAMO system
+  # Kathryn Cogert 12/6/15
 
 
   
@@ -33,16 +33,49 @@ anamx_NDAMO<- function(df){
   temp$px.ANAMX <- fN_anamx * Y_anamx * temp$LN * n_conv #kg/d, sludge produced from anammox
   temp$px.NDAMO <- Y_NDAMO * temp$LCH4_cons / CH4_COD * n_conv  #kg/d, sludge produced from NDAMO
 
+  # No AnMBR system present
+  # Therefore, these lines are left blank
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   # Anaerobic Digester
   temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced
   temp$px.OUT <- temp$px.TOT * (1-fx_digester)
   temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
   temp$V.biogas <- temp$CH4prod / rho_CH4.dig / x_biogas_CH4
-  temp$V.CO2.digester <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
-  temp$CO2.digester <- temp$V.CO2.digester / V.molgas.digester * MW_CO2
+  temp$V.CO2.AD <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
+  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.digester * MW_CO2
   
-  # Methane Balance
+  # Methane Addition for NDAMO/Methane Production for Energy Regeneration
+  
   temp$CH4burn <- temp$CH4prod - temp$LCH4_cons # kg Dissolved after NDAMO consume, kg/d
+  
   temp$COD.added <- 0
   temp$COD.added[which(temp$CH4burn<0)] <- -temp$CH4burn[which(temp$CH4burn<0)] / CH4_COD  # if need more than produced, get externally
   temp$CH4burn[which(temp$CH4burn<0)] <- 0 # if need more than produced, prodCH4  = 0
@@ -50,15 +83,14 @@ anamx_NDAMO<- function(df){
   
   # Summary
   temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) # Total stoichiometric O2 Demand
-  temp$LCH4.eff <- rep(0, times=nrow(temp))
-  temp$CO2.equivs  <- rowSums(select(temp, starts_with('CO2.'))) 
+  temp$CO2.TOT  <- rowSums(select(temp, starts_with('CO2.'))) 
   
   df$scenario <- rep('D', times=nrow(temp))
   df$COD.added <- temp$COD.added
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
-  df$CH4.dissolved <- temp$LCH4.eff
+  df$CH4.dissolved <- rep(0, times=nrow(temp))
   df$CH4.burn <- temp$CH4burn
-  df$CO2.equivs  <-  temp$CO2.equivs
+  df$CO2.equivs  <-  temp$CO2.TOT
   return(df)
   }

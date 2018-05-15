@@ -27,7 +27,42 @@ anamx <- function(df){
   
   # Anammox
   fN_anamx <- (1-fN_AOB) # wt%, fraction of N
+  
+  
+  
   temp$px.ANAMX <- fN_anamx * Y_anamx * temp$LN * n_conv #kg/d, sludge produced from anammox
+  
+  
+  # No AnMBR or NDAMO present
+  # Therefore these lines are left blank
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   # Anaerobic Digester
   temp$px.TOT <- rowSums(dplyr::select(temp, starts_with('px'))) #kg/d, total sludge produced
@@ -36,19 +71,25 @@ anamx <- function(df){
   temp$V.biogas <- temp$CH4prod / rho_CH4.dig / x_biogas_CH4
   temp$V.CO2.digester <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$V.CO2.digester / V.molgas.digester * MW_CO2
+  
+  # No Methane addition for NDAMO Required, 
+  # Therefore these lines are left blank
+  
+  
+  
+  
+  # Methane Production for Energy Regeneration
   temp$CO2.burn <- temp$CH4prod * sCO2_BURN * MW_CO2 / MW_CH4
   
   # Summary
   temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) # Total stoichiometric O2 Demand
-  temp$COD_bal <- rep(0, times=nrow(temp))
-  temp$LCH4.eff <- rep(0, times=nrow(temp))
   temp$CO2.equivs <- rowSums(select(temp, starts_with('CO2.')))
   
   df$scenario <- rep('B', times=nrow(temp))
-  df$COD.added <- temp$COD_bal
+  df$COD.added <- rep(0, times=nrow(temp))
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
-  df$CH4.dissolved <- temp$LCH4.eff
+  df$CH4.dissolved <- rep(0, times=nrow(temp))
   df$CH4.burn <- temp$CH4prod
   df$CO2.equivs  <- temp$CO2.equivs
   return(df)

@@ -3,14 +3,19 @@ MLE <- function(df) {
 # By Kathryn Cogert
 # Kathryn Cogert 12/6/15
   
+  
   # Loading Calculations
   df$LCOD <- df$Flowrate * df$Carbon #kgCOD/d, COD load per day
   LNin <- df$Flowrate * df$Nitrogen #kgN/d, Nitrogen load per day
   LNcent <- N_cent * LNin #kgN/d, Nitrogen load from centrate, assumed 40% of total load
   df$LN <- LNin + LNcent #kgN/d, total nitrogen load
-
-  
   temp <- df
+  
+  # No HRAS System present
+  # Therefore, these lines are left blank
+  
+  
+  
   
   # Nitrification
   fN_AOB <- 1 # wt%, fraction of total N in converted by AOB, see appendix , assumed 100% in MLE system
@@ -34,6 +39,31 @@ MLE <- function(df) {
   temp$px.HET[which(temp$COD_bal<0)] <-  -temp$COD_bal[which(temp$COD_bal<0)] * n_conv * Y_HET
   temp$CO2.HET <- (temp$LCOD + temp$COD_added) * sCO2_HET #CO2 produced
                      
+  # No AnMBR system present
+  # Therefore, these lines are left blank
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   # Anaerobic Digester
   temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced
   temp$px.OUT <- temp$px.TOT * (1-fx_digester)
@@ -41,6 +71,14 @@ MLE <- function(df) {
   temp$V.biogas <- temp$CH4prod / rho_CH4.dig / x_biogas_CH4
   temp$V.CO2.digester <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
   temp$CO2.digester <- temp$V.CO2.digester / V.molgas.digester * MW_CO2
+  
+  # No Methane addition for NDAMO Required, 
+  # Therefore these lines are left blank
+  
+  
+  
+  
+  
   temp$CO2.burn <- temp$CH4prod * sCO2_BURN * MW_CO2 / MW_CH4
   
   # Summary
