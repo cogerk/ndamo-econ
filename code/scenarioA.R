@@ -63,14 +63,14 @@ MLE <- function(df) {
   
   
   
-  
   # Anaerobic Digester
   temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced
-  temp$px.OUT <- temp$px.TOT * (1-fx_digester)
-  temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
-  temp$V.biogas <- temp$CH4prod / rho_CH4.dig / x_biogas_CH4
-  temp$V.CO2.digester <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
-  temp$CO2.digester <- temp$V.CO2.digester / V.molgas.digester * MW_CO2
+  temp$px.OUT <- temp$px.TOT * (1-fx_AD)
+  temp$CH4prod.AD <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
+  
+  temp$V.biogas.AD <- temp$CH4prod.AD / rho_CH4.dig / x_biogas_CH4
+  temp$V.CO2.AD <- temp$V.biogas.AD * (1 - x_biogas_CH4) # assume balance of biogas is CO2
+  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.AD * MW_CO2
   
   # No Methane addition for NDAMO Required, 
   # Therefore these lines are left blank
@@ -82,7 +82,6 @@ MLE <- function(df) {
   temp$CO2.burn <- temp$CH4prod * sCO2_BURN * MW_CO2 / MW_CH4
   
   # Summary
-  temp$LCH4.eff <- rep(0, times=nrow(temp))
   temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) 
   temp$CO2.equivs <- rowSums(select(temp, starts_with('CO2.')))
   
@@ -90,9 +89,8 @@ MLE <- function(df) {
   df$COD.added <- temp$COD_added
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
-  df$CH4.dissolved <- temp$LCH4.eff
-  df$CH4.burn <- temp$CH4prod
+  df$CH4.dissolved <- rep(0, times=nrow(temp))
+  df$CH4.burn <- temp$CH4prod.AD
   df$CO2.equivs  <- temp$CO2.equivs
   return(df)
-  }
-
+}

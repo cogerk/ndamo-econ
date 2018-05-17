@@ -6,9 +6,16 @@ anamx_AnMBR <- function(df){
   
   # Loading Calculations
   LNin <- df$Flowrate * df$Nitrogen #kgN/d, Nitrogen load per day
-  df$LN <- LNin  #kgN/d, total nitrogen load
+  LNcent <- N_cent * LNin #kgN/d, Nitrogen load from centrate, assumed 40% of total load
+  df$LN <- LNin + LNcent #kgN/d, total nitrogen load
   df$LCOD <- df$Flowrate * df$Carbon #kgCOD/d, COD load per day
-  temp <- df  
+  temp <- df 
+  
+  # No HRAS System present
+  # Therefore, these lines are left blank
+  
+  
+  
   
   # Nitrification
   fN_AOB <- 1.3/2.3 # wt%, fraction of total N in converted by AOB, see appendix
@@ -34,10 +41,10 @@ anamx_AnMBR <- function(df){
   # Dissolved vs. Gaseous Methane & CO2 Production
   cCH4dis <- H * P * x_biogas_CH4 * MW_CH4 * 1000/1000  # Sat. Dissolved CH4 conc, kgCH4/m3
   temp$LCH4diss <- cCH4dis * df$Flowrate * 10^3 # kg Dissolved, kg/d
-  temp$CH4burn.AnMBR <- temp$CH4prod - temp$LCH4diss # Dissolved methane not avail for regen, kg/d
-  temp$LCH4diss[which(temp$CH4burn.AnMBR<0)] <- temp$CH4prod[which(temp$CH4burn.AnMBR<0)] # If very little methane produced, assume all dissolves.
+  temp$CH4burn.AnMBR <- temp$CH4prod.AnMBR - temp$LCH4diss # Dissolved methane not avail for regen, kg/d
+  temp$LCH4diss[which(temp$CH4burn.AnMBR<0)] <- temp$CH4prod.AnMBR[which(temp$CH4burn.AnMBR<0)] # If very little methane produced, assume all dissolves.
   temp$CH4burn.AnMBR[which(temp$CH4burn.AnMBR<0)] <- 0 # Then no methane avail for energy regen
-  temp$V.biogas.AnMBR <- temp$CH4burn / rho_CH4.main / x_biogas_CH4 # Volume of biogas produced m3/d
+  temp$V.biogas.AnMBR <- temp$CH4prod.AnMBR / rho_CH4.main / x_biogas_CH4 # Volume of biogas produced m3/d
   temp$V.CO2.AnMBR <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
   temp$CO2.AnMBR <- temp$V.CO2.AnMBR / V.molgas.main * MW_CO2
   
@@ -46,8 +53,7 @@ anamx_AnMBR <- function(df){
   # Dissolved Methane in Nitrification Reactor (100% Of AnMBR Flow)
   CminCH4 <- 5  # mgCOD/L, minimum concentration at which CH4 will be oxidized
   x.CH4ox <- 0.9 # wt%, fraction of methane oxidized if oxidation occurs
-  
-  if (CminCH4 < cCH4dis) {
+  if (CminCH4 < cCH4dis * 1000) {
     temp$CH4.MOB.ox <- temp$LCH4diss * x.CH4ox
   } else {
     temp$CH4.MOB.ox <- 0
@@ -59,11 +65,12 @@ anamx_AnMBR <- function(df){
   
   # Anaerobic Digester
   temp$px.TOT <- rowSums(dplyr::select(temp, starts_with('px'))) #kg/d, total sludge produced
-  temp$px.OUT <- temp$px.TOT * (1-fx_digester)
-  temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD + temp$CH4burn.AnMBR # Total methane produced from AnMBR + AD
-  temp$V.biogas.AD <- temp$CH4prod / rho_CH4.dig / x_biogas_CH4
+  temp$px.OUT <- temp$px.TOT * (1-fx_AD)
+  temp$CH4prod.AD <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
+  temp$CH4burn <- temp$CH4prod.AD + temp$CH4burn.AnMBR # Total methane produced from AnMBR + AD
+  temp$V.biogas.AD <- temp$CH4prod.AD / rho_CH4.dig / x_biogas_CH4
   temp$V.CO2.AD <- temp$V.biogas.AD * (1 - x_biogas_CH4) # assume balance of biogas is CO2
-  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.digester * MW_CO2
+  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.AD * MW_CO2
   
 
   
@@ -72,7 +79,7 @@ anamx_AnMBR <- function(df){
   
   
   
-  temp$CO2.burn <- temp$CH4prod * sCO2_BURN * MW_CO2 / MW_CH4
+  temp$CO2.burn <- temp$CH4burn * sCO2_BURN * MW_CO2 / MW_CH4
   
   # Summary
   temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) # Total stoichiometric O2 Demand

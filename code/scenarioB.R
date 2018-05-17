@@ -18,8 +18,8 @@ anamx <- function(df){
   temp$CO2.HET <- temp$LCOD * sCO2_HET #CO2 produced
 
   # Nitrification
-  fN_AOB <- 1.3/2.3 # wt%, fraction of total N in converted by AOB, see appendix
-  fN_NOB <- 0  # wt%, frac of totN converted by NOB, assumed 100% in anammox system # Make temp dependent?
+  fN_AOB <- 0.5 # wt%, fraction of total N in converted by AOB, see appendix
+  fN_NOB <- fN_AOB  # wt%, frac of totN converted by NOB, assumed 100% in anammox system # Make temp dependent?
   temp$O2.AOB <- (fN_AOB * temp$LN) / MW_N * MW_O2 * sO2_AOB # kg/D O2 req'd by AOB
   temp$O2.NOB <- (fN_NOB * temp$LN) / MW_N * MW_O2 * sO2_NOB # kg/D O2 req'd by NOB
   temp$px.AOB <- fN_AOB * Y_AOB * n_conv * temp$LN #kg/d, sludge produced from AOB
@@ -63,14 +63,14 @@ anamx <- function(df){
   
   
   
-  
   # Anaerobic Digester
   temp$px.TOT <- rowSums(dplyr::select(temp, starts_with('px'))) #kg/d, total sludge produced
-  temp$px.OUT <- temp$px.TOT * (1-fx_digester)
-  temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
-  temp$V.biogas <- temp$CH4prod / rho_CH4.dig / x_biogas_CH4
-  temp$V.CO2.digester <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
-  temp$CO2.digester <- temp$V.CO2.digester / V.molgas.digester * MW_CO2
+  temp$px.OUT <- temp$px.TOT * (1-fx_AD)
+  temp$CH4prod.AD <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
+  
+  temp$V.biogas.AD <- temp$CH4prod.AD / rho_CH4.dig / x_biogas_CH4
+  temp$V.CO2.AD <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
+  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.AD * MW_CO2
   
   # No Methane addition for NDAMO Required, 
   # Therefore these lines are left blank
@@ -90,8 +90,7 @@ anamx <- function(df){
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
   df$CH4.dissolved <- rep(0, times=nrow(temp))
-  df$CH4.burn <- temp$CH4prod
+  df$CH4.burn <- temp$CH4prod.AD
   df$CO2.equivs  <- temp$CO2.equivs
   return(df)
   }
-

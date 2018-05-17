@@ -24,12 +24,12 @@ sCH4_NDAMO <<- 0.25 # stoich coeff of methane/nitrate for NDAMO
 
 # Temperature, Pressure, and pH impacts are largely not relevant to this model. 
 T.mainstream <<- 20 # Degrees C, assumed
-T.digester <<- 37 # Degrees C, assumed
+T.AD <<- 37 # Degrees C, assumed
 P <<- 1 # atm, assumed
 
 # Ideal Gas Law
 R <- 0.082057338 # Universal Gas Constant, m3 atm/ kmol/K
-V.molgas.digester <- R * (T.digester + 273.15) / P
+V.molgas.AD <- R * (T.AD + 273.15) / P
 V.molgas.main <- R * (T.mainstream + 273.15) / P
 
 # Sludge production Factors
@@ -44,13 +44,13 @@ Y_MOB <<- 0.19      # gCOD/gCOD
 
 
 # Digester & CO2 Production
-fx_digester <<- 0.59 # Assumed digester sludge conversion
+fx_AD <<- 0.59 # Assumed digester sludge conversion
 x_biogas_CH4 <<- 0.62 # Typical concentration of CH4 in biogas
 x_biogas_CO2 <<- 1-x_biogas_CH4 # Typical concentration of CH4 in biogas
-sCO2_HET <<- 0.08 # kgCO2/kg COD
+sCO2_HET <<- 1.2 # kgCO2/kg COD
 sCO2_NDAMO <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
 sCO2_BURN <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
-rho_CH4.dig <<- MW_CH4 / V.molgas.digester #kg/m3
+rho_CH4.dig <<- MW_CH4 / V.molgas.AD #kg/m3
 rho_CH4.main <<- MW_CH4 / V.molgas.main
 N_cent <<- 0.25
 
@@ -78,7 +78,7 @@ scenarios <- function(Q, cNin, cCODin,
     df.B[, c(7:9,11,ncol(df.B))] <- (df.B[, c(7:9,11,ncol(df.B))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
     df.C[, c(7:9,11,ncol(df.C))] <- (df.C[, c(7:9,11,ncol(df.C))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
     df.D[, c(7:9,11,ncol(df.D))] <- (df.D[, c(7:9,11,ncol(df.D))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
-    df.E[, c(7:9,11,ncol(df.D))] <- (df.E[, c(7:9,11,ncol(df.D))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
+    df.E[, c(7:9,11,ncol(df.E))] <- (df.E[, c(7:9,11,ncol(df.E))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
     
   }
   

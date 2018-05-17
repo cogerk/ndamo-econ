@@ -27,7 +27,7 @@ anamx_NDAMO<- function(df){
   
   # Anammox/NDAMO
   fN_anamx <- (1-fN_AOB) # wt%, fraction of N converted to N2 overall, see supplemental calculations
-  fN_NDAMO <- fN_NOB+0.3 # wt%, frac of totN converted by NDAMO, see supplemental calculations
+  fN_NDAMO <- fN_NOB + 0.3 # wt%, frac of totN converted by NDAMO, see supplemental calculations
   temp$LCH4_cons <- temp$LN * fN_NDAMO / MW_N * sCH4_NDAMO * MW_CH4  # kgCH4/d, Methane consumed by NDAMO
   temp$CO2.DAMO <- temp$LCH4_cons * sCO2_NDAMO * MW_CO2 / MW_CH4
   temp$px.ANAMX <- fN_anamx * Y_anamx * temp$LN * n_conv #kg/d, sludge produced from anammox
@@ -63,14 +63,14 @@ anamx_NDAMO<- function(df){
   
   
   
-  
   # Anaerobic Digester
   temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced
-  temp$px.OUT <- temp$px.TOT * (1-fx_digester)
+  temp$px.OUT <- temp$px.TOT * (1-fx_AD)
   temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
+  
   temp$V.biogas <- temp$CH4prod / rho_CH4.dig / x_biogas_CH4
   temp$V.CO2.AD <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
-  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.digester * MW_CO2
+  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.AD * MW_CO2
   
   # Methane Addition for NDAMO/Methane Production for Energy Regeneration
   
