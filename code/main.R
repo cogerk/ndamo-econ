@@ -271,8 +271,8 @@ qqO2.D = quantile(result$D$O2.demand, probs = seq(0, 1, 0.3333))
 
 ### Not Used
 #= Plot external carbon addition
-png('code/figures/External Carbon.png', width=8.5, height=3, units='in', res=500)
-fig.no <- 0
+png('code/figures/CODadded.png', width=8.5, height=5.5, units='in', res=500)
+fig.no <- 5
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, COD.added)
   p[[i]] <- levelplot(COD.added ~ Nitrogen * Carbon, data=d,
@@ -282,27 +282,35 @@ for (i in 1:(length(result)-1)) {
                         panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
                         panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
                       },
-                      at=c(seq(-1,-0.95, length=66),seq(-0.95+.01, 1, length=66*2)),
-                      col.regions=col.percent.low,
+                      at=c(seq(-1,1, length=100), seq(1+.01, 7, length=50)),
+                      col.regions=col.percent.ext1,
                       xlab="", ylab="",
                       scales=list(cex=1, tck = c(1,0),
-                                  x=x_tck,
+                                  x=xs,
                                   y=ys),
                       colorkey = list(labels=list(cex=1,
-                                                  at=c(-1.0, -0.95, -0.5 ,0, 0.5, 1),
-                                                  labels=col.labels.low)))
-  
+                                                  labels=col.labels.ext1)))
   leg.list <- p[[i]]$legend$right$args$key
-  leg8 <-  draw.colorkey(leg.list)
-  leg8$children[[4]]$children[[1]]$gp$fontfamily <- 'serif'
+  leg13 <-  draw.colorkey(leg.list)
+  leg13$children[[4]]$children[[1]]$gp$fontfamily <- 'serif'
   p[[i]] <- update(p[[i]], legend=NULL)
 }
 
-# Assign graphs to layout
-lab7 <- textGrob(expression('External Carbon Addition w/ respect to Base Case'), gp=gpar(cex=1.25, fontfamily='serif'))
-lab12 <- textGrob(paste(fig.no, fig.labels[1], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab13 <- textGrob(paste(fig.no, fig.labels[2], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab14 <- textGrob(paste(fig.no, fig.labels[3], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-grid.arrange(grobs = list(lab1,lab2,lab3,lab4,ax5, lab6, lab7, leg8, p[[1]], p[[2]],p[[3]], lab12, lab13, lab14), layout_matrix = lay)
-dev.off()
 
+# Assign Methane Production graphs to layout
+lab14 <- textGrob(expression('COD Added w/ respect to Base Case'), gp=gpar(cex=1.25, fontfamily='serif'))
+lab19 <- textGrob(paste(fig.no, fig.labels[1], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+lab20 <- textGrob(paste(fig.no, fig.labels[2], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+lab21 <- textGrob(paste(fig.no, fig.labels[3], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+lab22 <- textGrob(paste(fig.no, fig.labels[4], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+
+grid.arrange(grobs = list(lab1, lab2, lab3, lab4, # Plot titles
+                          lab5, lab5, ax7, ax8, # X-Axis
+                          ax9, lab10, ax9, lab10, # Y-Axis
+                          leg13, # Colorbar
+                          lab14,
+                          p[[1]], p[[2]],p[[3]], p[[4]], # Plots
+                          lab19, lab20, lab21, lab22,
+                          textGrob(''), textGrob(''), textGrob('')
+), layout_matrix = lay)
+dev.off()
