@@ -41,44 +41,32 @@ xs <- list(at=seq(0, Nmax, by=15), labels=rep('', length(seq(0, Nmax, by=15))))
 gs <- list()
 
 # Plot Titles
-lab1 <- textGrob(c('HRAS/anammox','vs. MLE'), gp=gpar(fontfamily='serif'), y=c(0.9,0.33))
-lab2 <- textGrob(c('AnMBR/anammox','vs. MLE'), gp=gpar(fontfamily='serif'), y=c(0.9,0.33))
-lab3 <- textGrob(c('HRAS/anammox & n-damo', 'vs. MLE'),gp=gpar(fontfamily='serif'), y=c(0.9,0.33))
-lab4 <- textGrob(c('AnMBR/anammox & n-damo','vs. MLE'), gp=gpar(fontfamily='serif'), y=c(0.9,0.33))
+lab1.name <- 'HRAS/anammox vs. MLE'
+lab2.name <- 'AnMBR/anammox vs. MLE'
+lab3.name <- 'HRAS/anammox/n-damo vs. MLE'
+lab4.name <- 'AnMBR/anammox/n-damo vs. MLE'
 
 
 # Axes
-lab5 <- textGrob('Nitrogen in Influent, mg/L', gp=gpar(fontfamily='serif'))
-ax7 <- textGrob(seq(0, Nmax, by=15), x=seq(0, 1.02, length.out = 5), y=.25, just='right', gp=gpar(fontfamily='serif'))
-ax8 <- textGrob(seq(15, Nmax, by=15), x=seq(0.255, 1.02, length.out = 4), y=.25, just='right', gp=gpar(fontfamily='serif'))
-lab10 <- textGrob('COD in Influent, mg/L', rot=90, gp=gpar(fontfamily='serif'))
-ax9 <- textGrob(seq(0,CODmax, by=50), y=seq(0, 1, length.out = 9), x=.75, just='right', gp=gpar(fontfamily='serif'))
-
+lab5 <- textGrob('Nitrogen in Influent, mg/L', gp=gpar(fontfamily='serif', cex=0.9))
+ax7 <- textGrob(seq(0, Nmax, by=15), x=seq(0, 1.02, length.out = 5), y=.25, just='right', gp=gpar(fontfamily='serif', cex=0.9))
+ax8 <- textGrob(seq(15, Nmax, by=15), x=seq(0.255, 1.02, length.out = 4), y=.25, just='right', gp=gpar(fontfamily='serif', cex=0.9))
+lab10 <- textGrob('COD in Influent, mg/L', rot=90, gp=gpar(fontfamily='serif', cex=0.9), x=.75)
+ax9 <- textGrob(seq(0,CODmax, by=50), y=seq(0, 1, length.out = 9), x=.75, just='right', gp=gpar(fontfamily='serif', cex=0.9))
+lab23 <- textGrob('% Difference from Base Case (MLE)',
+                  gp=gpar(fontfamily='serif'), rot=270, x=-.25)
 fig.labels <- c('.1', '.2', '.3', '.4')
 
 
 # Set up plot layout
-lay <- rbind(rep(14, each=17),
-             c(23,23,rep(19:20, each=6), rep(13,3)), #Scenarios A&B Plot #s
-             c(23,23,rep(1:2, each=6), rep(13,3)), # Scenarios A&B Titles
-             matrix(rep(c(12,11,rep(15:16, each=6), rep(13,3)), times=6), 
-                    nrow=6, 
-                    byrow=T), # Scenarios A&B
-             rep(24, each=17),
-             c(24,24,rep(21:22, each=6), rep(13,3)), #Scenarios C&D Plot #s
-             c(24,24, rep(3:4, each=6), rep(13,3)), # Scenarios C&D Titles
-             matrix(rep(c(10,9,rep(17:18, each=6), rep(13,3)), times=6), 
-                    nrow=6, 
-                    byrow=T),
-             c(25,25,rep(7:8,   each=6), rep(13,3)),
-             c(25,25,rep(5:6,   each=6), rep(13,3)),
-             rep(25, each=17)) # Scenarios C&D
-
+lay <- as.matrix(read.csv(file = 'code/figures/figure_layout.csv', header=FALSE)) # Scenarios C&D
+width <- 7.5
+height <- 6.5
 p <- list()
 
 
 #= Plot Oxygen Demand
-png('code/figures/O2 Demand.png', width=8.5, height=5.5, units='in', res=750)
+png('code/figures/O2 Demand.png', width=width, height=height, units='in', res=750)
 fig.no <- 2
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, O2.demand)
@@ -105,20 +93,26 @@ for (i in 1:(length(result)-1)) {
 
 
 # Assign Oxygen Demand graphs to layout
-lab14 <- textGrob(expression('Oxygen Demand w/ respect to Base Case'), gp=gpar(cex=1.25, fontfamily='serif'))
-lab19 <- textGrob(paste(fig.no, fig.labels[1], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab20 <- textGrob(paste(fig.no, fig.labels[2], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab21 <- textGrob(paste(fig.no, fig.labels[3], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab22 <- textGrob(paste(fig.no, fig.labels[4], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+lab14 <- textGrob('Oxygen Demand w/ respect to Base Case (MLE)', gp=gpar(cex=1.25, fontfamily='serif'))
+lab1 <- textGrob(paste(paste(fig.no, fig.labels[1], sep=''), lab1.name), 
+                 gp=gpar(fontfamily='serif'))
+lab2 <- textGrob(paste(paste(fig.no, fig.labels[2], sep=''), lab2.name),
+                 gp=gpar(fontfamily='serif'))
+lab3 <- textGrob(paste(paste(fig.no, fig.labels[3], sep=''), lab3.name),
+                 gp=gpar(fontfamily='serif'))
+lab4 <- textGrob(paste(paste(fig.no, fig.labels[4], sep=''), lab4.name),
+                 gp=gpar(fontfamily='serif'))
 
-grid.arrange(grobs = list(lab1, lab2, lab3, lab4, # Plot titles
-                          lab5, lab5, ax7, ax8, # X-Axis
-                          ax9, lab10, ax9, lab10, # Y-Axis
-                          leg13, # Colorbar
-                          lab14,
-                          p[[1]], p[[2]],p[[3]], p[[4]], # Plots
-                          lab19, lab20, lab21, lab22,
-                          textGrob(''), textGrob(''), textGrob('')
+grid.arrange(grobs = list(lab1, lab2, lab3, lab4,
+                          lab5, lab5, ax7, ax8, # X-Axis, Bottom, 5,6,7,8
+                          ax9, lab10, ax9, lab10, # Y-Axis left, 9,10,11,12
+                          leg13,  # Colorbar, 13
+                          lab14, # Figure Name, 14
+                          p[[1]], p[[2]],p[[3]], p[[4]], # Plots, 15,16,17,18
+                          ax7, ax8, lab5, lab5, # X-Axis, Top, 19,20,21,22
+                          lab23, # Colorbar Label, 23
+                          lab10, ax9, lab10, ax9, # Y-Axis right, 24,25,26,27
+                          textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob('') #Gaps
                           ), layout_matrix = lay)
  dev.off()
 
@@ -150,22 +144,28 @@ for (i in 1:(length(result)-1)) {
 }
 
 
-# Assign Sludge Production graphs to layout
-lab14 <- textGrob(expression('Sludge Production w/ respect to Base Case'), gp=gpar(cex=1.25, fontfamily='serif'))
-lab19 <- textGrob(paste(fig.no, fig.labels[1], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab20 <- textGrob(paste(fig.no, fig.labels[2], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab21 <- textGrob(paste(fig.no, fig.labels[3], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab22 <- textGrob(paste(fig.no, fig.labels[4], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+# Assign Oxygen Demand graphs to layout
+lab14 <- textGrob('Sludge Production w/ respect to Base Case (MLE)', gp=gpar(cex=1.25, fontfamily='serif'))
+lab1 <- textGrob(paste(paste(fig.no, fig.labels[1], sep=''), lab1.name), 
+                 gp=gpar(fontfamily='serif'))
+lab2 <- textGrob(paste(paste(fig.no, fig.labels[2], sep=''), lab2.name),
+                 gp=gpar(fontfamily='serif'))
+lab3 <- textGrob(paste(paste(fig.no, fig.labels[3], sep=''), lab3.name),
+                 gp=gpar(fontfamily='serif'))
+lab4 <- textGrob(paste(paste(fig.no, fig.labels[4], sep=''), lab4.name),
+                 gp=gpar(fontfamily='serif'))
 
-grid.arrange(grobs = list(lab1, lab2, lab3, lab4, # Plot titles
-                          lab5, lab5, ax7, ax8, # X-Axis
-                          ax9, lab10, ax9, lab10, # Y-Axis
-                          leg13, # Colorbar
-                          lab14,
-                          p[[1]], p[[2]],p[[3]], p[[4]], # Plots
-                          lab19, lab20, lab21, lab22,
-                          textGrob(''), textGrob(''), textGrob('')
-                          ), layout_matrix = lay)
+grid.arrange(grobs = list(lab1, lab2, lab3, lab4,
+                          lab5, lab5, ax7, ax8, # X-Axis, Bottom, 5,6,7,8
+                          ax9, lab10, ax9, lab10, # Y-Axis left, 9,10,11,12
+                          leg13,  # Colorbar, 13
+                          lab14, # Figure Name, 14
+                          p[[1]], p[[2]],p[[3]], p[[4]], # Plots, 15,16,17,18
+                          ax7, ax8, lab5, lab5, # X-Axis, Top, 19,20,21,22
+                          lab23, # Colorbar Label, 23
+                          lab10, ax9, lab10, ax9, # Y-Axis right, 24,25,26,27
+                          textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob('') #Gaps
+), layout_matrix = lay)
 dev.off()
 
 #= Plot Methane Production
@@ -197,20 +197,26 @@ for (i in 1:(length(result)-1)) {
 
 
 # Assign Methane Production graphs to layout
-lab14 <- textGrob(expression('Methane Production w/ respect to Base Case'), gp=gpar(cex=1.25, fontfamily='serif'))
-lab19 <- textGrob(paste(fig.no, fig.labels[1], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab20 <- textGrob(paste(fig.no, fig.labels[2], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab21 <- textGrob(paste(fig.no, fig.labels[3], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab22 <- textGrob(paste(fig.no, fig.labels[4], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+lab14 <- textGrob('Methane Production w/ respect to Base Case (MLE)', gp=gpar(cex=1.25, fontfamily='serif'))
+lab1 <- textGrob(paste(paste(fig.no, fig.labels[1], sep=''), lab1.name), 
+                 gp=gpar(fontfamily='serif'))
+lab2 <- textGrob(paste(paste(fig.no, fig.labels[2], sep=''), lab2.name),
+                 gp=gpar(fontfamily='serif'))
+lab3 <- textGrob(paste(paste(fig.no, fig.labels[3], sep=''), lab3.name),
+                 gp=gpar(fontfamily='serif'))
+lab4 <- textGrob(paste(paste(fig.no, fig.labels[4], sep=''), lab4.name),
+                 gp=gpar(fontfamily='serif'))
 
-grid.arrange(grobs = list(lab1, lab2, lab3, lab4, # Plot titles
-                          lab5, lab5, ax7, ax8, # X-Axis
-                          ax9, lab10, ax9, lab10, # Y-Axis
-                          leg13, # Colorbar
-                          lab14,
-                          p[[1]], p[[2]],p[[3]], p[[4]], # Plots
-                          lab19, lab20, lab21, lab22,
-                          textGrob(''), textGrob(''), textGrob('')
+grid.arrange(grobs = list(lab1, lab2, lab3, lab4,
+                          lab5, lab5, ax7, ax8, # X-Axis, Bottom, 5,6,7,8
+                          ax9, lab10, ax9, lab10, # Y-Axis left, 9,10,11,12
+                          leg13,  # Colorbar, 13
+                          lab14, # Figure Name, 14
+                          p[[1]], p[[2]],p[[3]], p[[4]], # Plots, 15,16,17,18
+                          ax7, ax8, lab5, lab5, # X-Axis, Top, 19,20,21,22
+                          lab23, # Colorbar Label, 23
+                          lab10, ax9, lab10, ax9, # Y-Axis right, 24,25,26,27
+                          textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob('') #Gaps
 ), layout_matrix = lay)
 dev.off()
 
@@ -243,21 +249,27 @@ for (i in 1:(length(result)-1)) {
 }
 
 
-# Assign Methane Production graphs to layout
-lab14 <- textGrob(expression('GHG Emissions w/ respect to Base Case'), gp=gpar(cex=1.25, fontfamily='serif'))
-lab19 <- textGrob(paste(fig.no, fig.labels[1], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab20 <- textGrob(paste(fig.no, fig.labels[2], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab21 <- textGrob(paste(fig.no, fig.labels[3], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab22 <- textGrob(paste(fig.no, fig.labels[4], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+# Assign GHG Production graphs to layout
+lab14 <- textGrob('GHG Production w/ respect to Base Case (MLE)', gp=gpar(cex=1.25, fontfamily='serif'))
+lab1 <- textGrob(paste(paste(fig.no, fig.labels[1], sep=''), lab1.name), 
+                 gp=gpar(fontfamily='serif'))
+lab2 <- textGrob(paste(paste(fig.no, fig.labels[2], sep=''), lab2.name),
+                 gp=gpar(fontfamily='serif'))
+lab3 <- textGrob(paste(paste(fig.no, fig.labels[3], sep=''), lab3.name),
+                 gp=gpar(fontfamily='serif'))
+lab4 <- textGrob(paste(paste(fig.no, fig.labels[4], sep=''), lab4.name),
+                 gp=gpar(fontfamily='serif'))
 
-grid.arrange(grobs = list(lab1, lab2, lab3, lab4, # Plot titles
-                          lab5, lab5, ax7, ax8, # X-Axis
-                          ax9, lab10, ax9, lab10, # Y-Axis
-                          leg13, # Colorbar
-                          lab14,
-                          p[[1]], p[[2]],p[[3]], p[[4]], # Plots
-                          lab19, lab20, lab21, lab22,
-                          textGrob(''), textGrob(''), textGrob('')
+grid.arrange(grobs = list(lab1, lab2, lab3, lab4,
+                          lab5, lab5, ax7, ax8, # X-Axis, Bottom, 5,6,7,8
+                          ax9, lab10, ax9, lab10, # Y-Axis left, 9,10,11,12
+                          leg13,  # Colorbar, 13
+                          lab14, # Figure Name, 14
+                          p[[1]], p[[2]],p[[3]], p[[4]], # Plots, 15,16,17,18
+                          ax7, ax8, lab5, lab5, # X-Axis, Top, 19,20,21,22
+                          lab23, # Colorbar Label, 23
+                          lab10, ax9, lab10, ax9, # Y-Axis right, 24,25,26,27
+                          textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob('') #Gaps
 ), layout_matrix = lay)
 dev.off()
 
@@ -271,46 +283,46 @@ qqO2.D = quantile(result$D$O2.demand, probs = seq(0, 1, 0.3333))
 
 ### Not Used
 #= Plot external carbon addition
-png('code/figures/CODadded.png', width=8.5, height=5.5, units='in', res=500)
-fig.no <- 5
-for (i in 1:(length(result)-1)) {
-  d <- select(result[[i+1]], Nitrogen, Carbon, COD.added)
-  p[[i]] <- levelplot(COD.added ~ Nitrogen * Carbon, data=d,
-                      par.settings=list(axis.text=list(fontfamily="serif")),
-                      panel = function(...){
-                        panel.levelplot(...)
-                        panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
-                        panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
-                      },
-                      at=c(seq(-1,1, length=100), seq(1+.01, 7, length=50)),
-                      col.regions=col.percent.ext1,
-                      xlab="", ylab="",
-                      scales=list(cex=1, tck = c(1,0),
-                                  x=xs,
-                                  y=ys),
-                      colorkey = list(labels=list(cex=1,
-                                                  labels=col.labels.ext1)))
-  leg.list <- p[[i]]$legend$right$args$key
-  leg13 <-  draw.colorkey(leg.list)
-  leg13$children[[4]]$children[[1]]$gp$fontfamily <- 'serif'
-  p[[i]] <- update(p[[i]], legend=NULL)
-}
-
-
-# Assign Methane Production graphs to layout
-lab14 <- textGrob(expression('COD Added w/ respect to Base Case'), gp=gpar(cex=1.25, fontfamily='serif'))
-lab19 <- textGrob(paste(fig.no, fig.labels[1], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab20 <- textGrob(paste(fig.no, fig.labels[2], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab21 <- textGrob(paste(fig.no, fig.labels[3], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-lab22 <- textGrob(paste(fig.no, fig.labels[4], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-
-grid.arrange(grobs = list(lab1, lab2, lab3, lab4, # Plot titles
-                          lab5, lab5, ax7, ax8, # X-Axis
-                          ax9, lab10, ax9, lab10, # Y-Axis
-                          leg13, # Colorbar
-                          lab14,
-                          p[[1]], p[[2]],p[[3]], p[[4]], # Plots
-                          lab19, lab20, lab21, lab22,
-                          textGrob(''), textGrob(''), textGrob('')
-), layout_matrix = lay)
-dev.off()
+# png('code/figures/CODadded.png', width=8.5, height=5.5, units='in', res=500)
+# fig.no <- 5
+# for (i in 1:(length(result)-1)) {
+#   d <- select(result[[i+1]], Nitrogen, Carbon, COD.added)
+#   p[[i]] <- levelplot(COD.added ~ Nitrogen * Carbon, data=d,
+#                       par.settings=list(axis.text=list(fontfamily="serif")),
+#                       panel = function(...){
+#                         panel.levelplot(...)
+#                         panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
+#                         panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
+#                       },
+#                       at=c(seq(-1,1, length=100), seq(1+.01, 7, length=50)),
+#                       col.regions=col.percent.ext1,
+#                       xlab="", ylab="",
+#                       scales=list(cex=1, tck = c(1,0),
+#                                   x=xs,
+#                                   y=ys),
+#                       colorkey = list(labels=list(cex=1,
+#                                                   labels=col.labels.ext1)))
+#   leg.list <- p[[i]]$legend$right$args$key
+#   leg13 <-  draw.colorkey(leg.list)
+#   leg13$children[[4]]$children[[1]]$gp$fontfamily <- 'serif'
+#   p[[i]] <- update(p[[i]], legend=NULL)
+# }
+# 
+# 
+# # Assign Methane Production graphs to layout
+# lab14 <- textGrob(expression('COD Added w/ respect to Base Case'), gp=gpar(cex=1.25, fontfamily='serif'))
+# lab19 <- textGrob(paste(fig.no, fig.labels[1], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+# lab20 <- textGrob(paste(fig.no, fig.labels[2], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+# lab21 <- textGrob(paste(fig.no, fig.labels[3], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+# lab22 <- textGrob(paste(fig.no, fig.labels[4], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
+# 
+# grid.arrange(grobs = list(lab1, lab2, lab3, lab4, # Plot titles
+#                           lab5, lab5, ax7, ax8, # X-Axis
+#                           ax9, lab10, ax9, lab10, # Y-Axis
+#                           leg13, # Colorbar
+#                           lab14,
+#                           p[[1]], p[[2]],p[[3]], p[[4]], # Plots
+#                           lab19, lab20, lab21, lab22,
+#                           textGrob(''), textGrob(''), textGrob('')
+# ), layout_matrix = lay)
+# dev.off()

@@ -19,7 +19,7 @@ anamx <- function(df){
 
   # Nitrification
   fN_AOB <- 0.5 # wt%, fraction of total N in converted by AOB, see appendix
-  fN_NOB <- fN_AOB  # wt%, frac of totN converted by NOB, assumed 100% in anammox system # Make temp dependent?
+  fN_NOB <- 0  # wt%, frac of totN converted by NOB, assumed 0%
   temp$O2.AOB <- (fN_AOB * temp$LN) / MW_N * MW_O2 * sO2_AOB # kg/D O2 req'd by AOB
   temp$O2.NOB <- (fN_NOB * temp$LN) / MW_N * MW_O2 * sO2_NOB # kg/D O2 req'd by NOB
   temp$px.AOB <- fN_AOB * Y_AOB * n_conv * temp$LN #kg/d, sludge produced from AOB
