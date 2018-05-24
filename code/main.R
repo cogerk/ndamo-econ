@@ -30,7 +30,7 @@ lattice.options(layout.widths = lw, layout.heights = lh)
 
 # Set up labels
 col.labels <- c('-100%', '-50%', '0%','50%','100%')
-col.labels.ext1 <- c('-100%', '0%', '100%','200%','300%','400%','500%', '600%', '>700%')
+col.labels.ext1 <- c('-100%', '0%', '100%','200%','300%','400%','>500%')
 col.labels.low <- c('-100%', '-95%', '-50%', '0%','50%','100%')
 col.percent <- colorRampPalette(c('blue', 'white', 'red'))
 col.percent.low <- colorRampPalette(c('blue', 'lightblue', 'white', 'red'))
@@ -118,7 +118,7 @@ grid.arrange(grobs = list(lab1, lab2, lab3, lab4,
 
 
 #= Plot Sludge Production
-png('code/figures/Sludge Production.png', width=8.5, height=5.5, units='in', res=750)
+png('code/figures/Sludge Production.png', width=width, height=height, units='in', res=750)
 fig.no <- 3
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, sludge.out)
@@ -169,7 +169,7 @@ grid.arrange(grobs = list(lab1, lab2, lab3, lab4,
 dev.off()
 
 #= Plot Methane Production
-png('code/figures/Methane Production.png', width=8.5, height=5.5, units='in', res=500)
+png('code/figures/Methane Production.png', width=width, height=height, units='in', res=500)
 fig.no <- 4
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, CH4.burn)
@@ -222,7 +222,7 @@ dev.off()
 
 
 #= Plot GHG Emissions
-png('code/figures/GHG.png', width=8.5, height=5.5, units='in', res=500)
+png('code/figures/GHG.png', width=width, height=height, units='in', res=500)
 fig.no <- 5
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, CO2.equivs)
@@ -234,14 +234,14 @@ for (i in 1:(length(result)-1)) {
                         panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
                         panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
                       },
-                      at=c(seq(-1,1, length=100), seq(1+.01, 7, length=50)),
+                      at=c(seq(-1,1, length=100),seq(1+.01, 5, length=50)),
                       col.regions=col.percent.ext1,
                       xlab="", ylab="",
                       scales=list(cex=1, tck = c(1,0),
                                   x=xs,
                                   y=ys),
                       colorkey = list(labels=list(cex=1,
-                               labels=col.labels.ext1)))
+                                                  labels=col.labels.ext1)))
   leg.list <- p[[i]]$legend$right$args$key
   leg13 <-  draw.colorkey(leg.list)
   leg13$children[[4]]$children[[1]]$gp$fontfamily <- 'serif'
@@ -283,7 +283,7 @@ qqO2.D = quantile(result$D$O2.demand, probs = seq(0, 1, 0.3333))
 
 ### Not Used
 #= Plot external carbon addition
-# png('code/figures/CODadded.png', width=8.5, height=5.5, units='in', res=500)
+# png('code/figures/CODadded.png', width=width, height=height, units='in', res=500)
 # fig.no <- 5
 # for (i in 1:(length(result)-1)) {
 #   d <- select(result[[i+1]], Nitrogen, Carbon, COD.added)
