@@ -83,7 +83,7 @@ anamx <- function(df){
   
   # Summary
   temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) # Total stoichiometric O2 Demand
-  temp$CO2.equivs <- rowSums(select(temp, starts_with('CO2.')))
+  temp$CO2.equivs <- rowSums(select(temp, starts_with('CO2.'),-matches('CO2.burn')))
   
   df$scenario <- rep('B', times=nrow(temp))
   df$COD.added <- rep(0, times=nrow(temp))

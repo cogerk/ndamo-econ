@@ -44,7 +44,7 @@ anamx_NDAMO_AnMBR <- function(df){
   temp$CH4burn.AnMBR <- temp$CH4prod.AnMBR - temp$LCH4diss # Dissolved methane not avail for regen, kg/d
   temp$LCH4diss[which(temp$CH4burn.AnMBR<0)] <- temp$CH4prod.AnMBR[which(temp$CH4burn.AnMBR<0)] # If very little methane produced, assume all dissolves.
   temp$CH4burn.AnMBR[which(temp$CH4burn.AnMBR<0)] <- 0 # Then no methane avail for energy regen
-  temp$V.biogas.AnMBR <- temp$CH4burn.AnMBR / rho_CH4.main / x_biogas_CH4 # Volume of biogas produced m3/d
+  temp$V.biogas.AnMBR <- temp$CH4prod.AnMBR / rho_CH4.main / x_biogas_CH4 # Volume of biogas produced m3/d
   temp$V.CO2.AnMBR <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
   temp$CO2.AnMBR <- temp$V.CO2.AnMBR / V.molgas.main * MW_CO2
   temp$LCH4diss.NIT <- 0.5 * temp$LCH4diss # kgCH4 Dissolved/day, half to aerobic nitrification reactor
@@ -84,7 +84,7 @@ anamx_NDAMO_AnMBR <- function(df){
  
   # Summary
   temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) # Total stoichiometric O2 Demand
-  temp$CO2.TOT <-  rowSums(select(temp, starts_with('CO2.'))) + (temp$LCH4 + temp$CH4.fromNIT) * CO2eq_CH4
+  temp$CO2.TOT <-  rowSums(select(temp, starts_with('CO2.'),-matches('CO2.burn'))) + (temp$LCH4 + temp$CH4.fromNIT) * CO2eq_CH4
   
   df$scenario <- rep('E', times=nrow(temp))
   df$COD.added <- temp$COD.added

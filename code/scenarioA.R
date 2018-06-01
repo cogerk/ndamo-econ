@@ -83,7 +83,7 @@ MLE <- function(df) {
   
   # Summary
   temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) 
-  temp$CO2.equivs <- rowSums(select(temp, starts_with('CO2.')))
+  temp$CO2.equivs <- rowSums(select(temp, starts_with('CO2.'),-matches('CO2.burn')))
   
   df$scenario <- rep('A', times=nrow(temp))
   df$COD.added <- temp$COD_added
