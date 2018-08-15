@@ -38,7 +38,7 @@ Y_DENIT <<- 0.30/n_conv    # gCOD/gCOD
 Y_HET <<- 0.45/n_conv      # gCOD/gCOD
 Y_AOB <<- 0.12/n_conv      # gCOD/gN
 Y_NOB <<- 0.05/n_conv      # gCOD/gN
-Y_anamx <<- 0.13/n_conv    # gCOD/gN
+Y_anamx <<- 0.13/n_conv    # gCOD/gN-NH4
 Y_NDAMO <<- 0.071    # gCOD/gCOD
 Y_MOB <<- 0.19      # gCOD/gCOD
 

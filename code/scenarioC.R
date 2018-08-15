@@ -1,6 +1,6 @@
 anamx_AnMBR <- function(df){
   # Mass and energy balance for mainstream anaerobic membrane bioreactor 
-  # with NDAMO and Anammox nitrogen removal system.
+  # with Anammox nitrogen removal system.
   # Kathryn Cogert 12/6/15
   
   

@@ -326,3 +326,5 @@ qqO2.D = quantile(result$D$O2.demand, probs = seq(0, 1, 0.3333))
 #                           textGrob(''), textGrob(''), textGrob('')
 # ), layout_matrix = lay)
 # dev.off()
+
+print(Y_anamx)

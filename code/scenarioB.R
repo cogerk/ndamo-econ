@@ -18,7 +18,7 @@ anamx <- function(df){
   temp$CO2.HET <- temp$LCOD * sCO2_HET #CO2 produced
 
   # Nitrification
-  fN_AOB <- 0.5 # wt%, fraction of total N in converted by AOB, see appendix
+  fN_AOB <- 1.3/2.3 # wt%, fraction of total N in converted by AOB, see appendix
   fN_NOB <- 0  # wt%, frac of totN converted by NOB, assumed 0%
   temp$O2.AOB <- (fN_AOB * temp$LN) / MW_N * MW_O2 * sO2_AOB # kg/D O2 req'd by AOB
   temp$O2.NOB <- (fN_NOB * temp$LN) / MW_N * MW_O2 * sO2_NOB # kg/D O2 req'd by NOB

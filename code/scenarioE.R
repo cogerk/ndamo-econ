@@ -47,8 +47,8 @@ anamx_NDAMO_AnMBR <- function(df){
   temp$V.biogas.AnMBR <- temp$CH4prod.AnMBR / rho_CH4.main / x_biogas_CH4 # Volume of biogas produced m3/d
   temp$V.CO2.AnMBR <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
   temp$CO2.AnMBR <- temp$V.CO2.AnMBR / V.molgas.main * MW_CO2
-  temp$LCH4diss.NIT <- 0.5 * temp$LCH4diss # kgCH4 Dissolved/day, half to aerobic nitrification reactor
-  
+  temp$LCH4diss.NIT <- fN_NOB * temp$LCH4diss # kgCH4 Dissolved/day, half to aerobic nitrification reactor
+  temp$LCH4diss.AMX <- temp$LCH4diss - temp$LCH4diss.NIT
   
   # Dissolved Methane in Nitrification Reactor (50% of AnMBR Flow)
   CminCH4 <- 5  # mgCOD/L, minimum concentration at which CH4 will be oxidized
@@ -74,7 +74,7 @@ anamx_NDAMO_AnMBR <- function(df){
   temp$CO2.AD <- temp$V.CO2.AD / V.molgas.AD * MW_CO2
   
   # Methane Addition for NDAMO/Methane Production for Energy Regeneration
-  temp$LCH4 <- (temp$LCH4diss - temp$LCH4diss.NIT) - temp$LCH4_cons # kg Dissolved after NDAMO consume, kg/d
+  temp$LCH4 <- temp$LCH4diss.AMX - temp$LCH4_cons # kg Dissolved after NDAMO consume, kg/d
   temp$CH4burn.TOT[which(temp$LCH4<0)] <- temp$CH4burn.TOT[which(temp$LCH4<0)] + temp$LCH4[which(temp$LCH4<0)] # if need more than dissolved, take it from CH4 gas
   temp$LCH4[which(temp$LCH4<0)] <- 0 # if need more than dissolved, dissolved CH4 = 0
   temp$COD.added <- 0
