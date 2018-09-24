@@ -16,7 +16,6 @@ MLE <- function(df) {
   
   
   
-  
   # Nitrification
   fN_AOB <- 1 # wt%, fraction of total N in converted by AOB, see appendix , assumed 100% in MLE system
   fN_NOB <- fN_AOB  # wt%, frac of totN converted by NOB, assumed 100% in MLE system
@@ -37,13 +36,9 @@ MLE <- function(df) {
   temp$O2.HET[which(temp$COD_bal<0)] <-  -temp$COD_bal[which(temp$COD_bal<0)]
   temp$px.HET <- 0 
   temp$px.HET[which(temp$COD_bal<0)] <-  -temp$COD_bal[which(temp$COD_bal<0)] * n_conv * Y_HET
-  temp$CO2.HET <- (temp$LCOD + temp$COD_added) * sCO2_HET #CO2 produced
                      
   # No AnMBR system present
   # Therefore, these lines are left blank
-  
-  
-  
   
   
   
@@ -68,9 +63,6 @@ MLE <- function(df) {
   temp$px.OUT <- temp$px.TOT * (1-fx_AD)
   temp$CH4prod.AD <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
   
-  temp$V.biogas.AD <- temp$CH4prod.AD / rho_CH4.dig / x_biogas_CH4
-  temp$V.CO2.AD <- temp$V.biogas.AD * (1 - x_biogas_CH4) # assume balance of biogas is CO2
-  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.AD * MW_CO2
   
   # No Methane addition for NDAMO Required, 
   # Therefore these lines are left blank
@@ -79,18 +71,23 @@ MLE <- function(df) {
   
   
   
-  temp$CO2.burn <- temp$CH4prod * sCO2_BURN * MW_CO2 / MW_CH4
+  
+  # Total stoichiometric O2 Demand
+  temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) 
+  
+  # Electrical Demand
+  temp$E.O2 <- temp$O2.TOT * e_O2
+  temp$E.SludgeThicken <- temp$px.OUT * e_SludgeThicken
+  
+  temp$E.CHP <- -temp$CH4prod.AD * H_c_CH4 * n.CHP
+  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh
   
   # Summary
-  temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) 
-  temp$CO2.equivs <- rowSums(select(temp, starts_with('CO2.'),-matches('CO2.burn')))
-  
   df$scenario <- rep('A', times=nrow(temp))
   df$COD.added <- temp$COD_added
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
-  df$CH4.dissolved <- rep(0, times=nrow(temp))
   df$CH4.burn <- temp$CH4prod.AD
-  df$CO2.equivs  <- temp$CO2.equivs
+  df$CO2.equivs  <- temp$CO2
   return(df)
 }

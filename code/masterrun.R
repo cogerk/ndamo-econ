@@ -8,7 +8,6 @@ source(file = 'code/scenarioE.R')
 
 ### Constants
 MW_O2 <<- 32
-MW_CO2 <<- 44
 MW_CH4 <<- 16
 MW_N <<- 14
 CH4_COD <<- 4
@@ -43,16 +42,18 @@ Y_NDAMO <<- 0.071    # gCOD/gCOD
 Y_MOB <<- 0.19      # gCOD/gCOD
 
 
-# Digester & CO2 Production
+# Digester 
 fx_AD <<- 0.59 # Assumed digester sludge conversion
 x_biogas_CH4 <<- 0.62 # Typical concentration of CH4 in biogas
-x_biogas_CO2 <<- 1-x_biogas_CH4 # Typical concentration of CH4 in biogas
-sCO2_HET <<- 1.2 # kgCO2/kg COD
-sCO2_NDAMO <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
-sCO2_BURN <<- MW_CO2/MW_CH4 # kgCO2/kg CH4
-rho_CH4.dig <<- MW_CH4 / V.molgas.AD #kg/m3
-rho_CH4.main <<- MW_CH4 / V.molgas.main
 N_cent <<- 0.25
+
+# Electricity Generation
+kgCO2.kWh <<- 0.47 # kgCO2/kWh
+e_SludgeThicken <<- .045 #kWh/kg Sludge
+e_O2 <<- 1/.7 #kWh/kgO2
+e_AnMBR <<- 190 #kWh/ML
+H_c_CH4 <<- 15.4 #kWh/kg
+n.CHP <<- 0.33
 
 scenarios <- function(Q, cNin, cCODin, 
                       compare=TRUE, expand=TRUE){
@@ -75,10 +76,10 @@ scenarios <- function(Q, cNin, cCODin,
   #== Compare all theoretical scenarios to base case MLE if true
   if (compare) {
     #= Calculate Sludge Production/O2 Demand as fraction of MLE
-    df.B[, c(7:9,11,ncol(df.B))] <- (df.B[, c(7:9,11,ncol(df.B))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
-    df.C[, c(7:9,11,ncol(df.C))] <- (df.C[, c(7:9,11,ncol(df.C))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
-    df.D[, c(7:9,11,ncol(df.D))] <- (df.D[, c(7:9,11,ncol(df.D))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
-    df.E[, c(7:9,11,ncol(df.E))] <- (df.E[, c(7:9,11,ncol(df.E))]-df.A[, c(7:9,11,ncol(df.A))])/df.A[, c(7:9,11,ncol(df.A))]
+    df.B[, c(7:11)] <- (df.B[, c(7:11)]-df.A[, c(7:11)])/df.A[, c(7:11)]
+    df.C[, c(7:11)] <- (df.C[, c(7:11)]-df.A[, c(7:11)])/df.A[, c(7:11)]
+    df.D[, c(7:11)] <- (df.D[, c(7:11)]-df.A[, c(7:11)])/df.A[, c(7:11)]
+    df.E[, c(7:11)] <- (df.E[, c(7:11)]-df.A[, c(7:11)])/df.A[, c(7:11)]
     
   }
   

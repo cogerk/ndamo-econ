@@ -15,7 +15,6 @@ anamx <- function(df){
   fCOD_HET <- 1 # Assume 100% conversion of COD 
   temp$px.HET <- fCOD_HET * temp$LCOD * Y_HET * n_conv # Biomass produced/d
   temp$O2.HET <- fCOD_HET * temp$LCOD # O2 demand in A Stage
-  temp$CO2.HET <- temp$LCOD * sCO2_HET #CO2 produced
 
   # Nitrification
   fN_AOB <- 1.3/2.3 # wt%, fraction of total N in converted by AOB, see appendix
@@ -59,38 +58,36 @@ anamx <- function(df){
   
   
   
-  
-  
-  
-  
   # Anaerobic Digester
   temp$px.TOT <- rowSums(dplyr::select(temp, starts_with('px'))) #kg/d, total sludge produced
   temp$px.OUT <- temp$px.TOT * (1-fx_AD)
   temp$CH4prod.AD <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
   
   temp$V.biogas.AD <- temp$CH4prod.AD / rho_CH4.dig / x_biogas_CH4
-  temp$V.CO2.AD <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
-  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.AD * MW_CO2
   
   # No Methane addition for NDAMO Required, 
   # Therefore these lines are left blank
   
   
   
+
   
-  # Methane Production for Energy Regeneration
-  temp$CO2.burn <- temp$CH4prod * sCO2_BURN * MW_CO2 / MW_CH4
+  # Total stoichiometric O2 Demand
+  temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) # Total stoichiometric O2 Demand
+  
+  # Electricity Req'mts
+  temp$E.O2 <- temp$O2.TOT * e_O2
+  temp$E.SludgeThicken <- temp$px.OUT * e_SludgeThicken
+  
+  temp$E.CHP <- -temp$CH4prod.AD * H_c_CH4 * n.CHP
+  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh
   
   # Summary
-  temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) # Total stoichiometric O2 Demand
-  temp$CO2.equivs <- rowSums(select(temp, starts_with('CO2.'),-matches('CO2.burn')))
-  
   df$scenario <- rep('B', times=nrow(temp))
   df$COD.added <- rep(0, times=nrow(temp))
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
-  df$CH4.dissolved <- rep(0, times=nrow(temp))
   df$CH4.burn <- temp$CH4prod.AD
-  df$CO2.equivs  <- temp$CO2.equivs
+  df$CO2.equivs  <- temp$CO2
   return(df)
-  }
+}

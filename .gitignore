@@ -12,3 +12,4 @@ code/quantileregression.R
 code/MonteCarloGenerationBuilder.R
 code/GraphScenarios.R
 code/deprecated
+ghg_check.csv

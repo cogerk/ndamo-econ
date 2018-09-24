@@ -15,7 +15,6 @@ anamx_NDAMO<- function(df){
   fCOD_HET <- 1 # Assume 100% conversion of COD 
   temp$px.HET <- fCOD_HET * temp$LCOD * Y_HET * n_conv # Biomass produced/d
   temp$O2.HET <- fCOD_HET * temp$LCOD # O2 demand in A Stage
-  temp$CO2.HET <- temp$LCOD * sCO2_HET #CO2 produced
   
   # Nitrification
   fN_AOB <- 0.5 # wt%, fraction of total N in converted by AOB, see supplemental calculations
@@ -29,7 +28,6 @@ anamx_NDAMO<- function(df){
   fN_anamx <- (1-fN_AOB) # wt%, fraction of N converted to N2 overall, see supplemental calculations
   fN_NDAMO <- fN_NOB + 0.3 # wt%, frac of totN converted by NDAMO, see supplemental calculations
   temp$LCH4_cons <- temp$LN * fN_NDAMO / MW_N * sCH4_NDAMO * MW_CH4  # kgCH4/d, Methane consumed by NDAMO
-  temp$CO2.DAMO <- temp$LCH4_cons * sCO2_NDAMO * MW_CO2 / MW_CH4
   temp$px.ANAMX <- fN_anamx * Y_anamx * temp$LN * n_conv #kg/d, sludge produced from anammox
   temp$px.NDAMO <- Y_NDAMO * temp$LCH4_cons / CH4_COD * n_conv  #kg/d, sludge produced from NDAMO
 
@@ -60,17 +58,11 @@ anamx_NDAMO<- function(df){
   
   
   
-  
-  
-  
   # Anaerobic Digester
   temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced
   temp$px.OUT <- temp$px.TOT * (1-fx_AD)
   temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
   
-  temp$V.biogas <- temp$CH4prod / rho_CH4.dig / x_biogas_CH4
-  temp$V.CO2.AD <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
-  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.AD * MW_CO2
   
   # Methane Addition for NDAMO/Methane Production for Energy Regeneration
   
@@ -79,18 +71,23 @@ anamx_NDAMO<- function(df){
   temp$COD.added <- 0
   temp$COD.added[which(temp$CH4burn<0)] <- -temp$CH4burn[which(temp$CH4burn<0)] / CH4_COD  # if need more than produced, get externally
   temp$CH4burn[which(temp$CH4burn<0)] <- 0 # if need more than produced, prodCH4  = 0
-  temp$CO2.burn <- temp$CH4burn * sCO2_BURN * MW_CO2 / MW_CH4 # CO2 from energy regeneration
   
-  # Summary
-  temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) # Total stoichiometric O2 Demand
-  temp$CO2.TOT  <- rowSums(select(temp, starts_with('CO2.'),-matches('CO2.burn'))) 
+  # Total stoichiometric O2 Demand
+  temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) 
+ 
+  # Electricity Req'mts
+  temp$E.O2 <- temp$O2.TOT * e_O2
+  temp$E.SludgeThicken <- temp$px.OUT * e_SludgeThicken
+
+  temp$E.CHP <- -temp$CH4burn * H_c_CH4 * n.CHP
+  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh
   
+  #Summary
   df$scenario <- rep('D', times=nrow(temp))
   df$COD.added <- temp$COD.added
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
-  df$CH4.dissolved <- rep(0, times=nrow(temp))
   df$CH4.burn <- temp$CH4burn
-  df$CO2.equivs  <-  temp$CO2.TOT
+  df$CO2.equivs  <-  temp$CO2
   return(df)
-  }
+}

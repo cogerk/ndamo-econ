@@ -10,9 +10,9 @@ require(extrafont)
 
 #== Set up conditions to run
 Nmax <- 60
-Nmin <- 2
-CODmax <- 400
-CODmin <- 0.01
+Nmin <- 0.6
+CODmax <- 400914
+CODmin <- 4
 Qmax <- 600
 cNin <- seq(Nmin, Nmax, length=100) # Nitrogen concentration varies
 cCODin <- seq(CODmin, CODmax, length=100) # Carbon concentration varies
@@ -31,11 +31,12 @@ lattice.options(layout.widths = lw, layout.heights = lh)
 # Set up labels
 col.labels <- c('-100%', '-50%', '0%','50%','100%')
 col.labels.ext1 <- c('-100%', '0%', '100%','200%','300%','400%','>500%')
+col.labels.ext2 <- c('<-500%', '-250%','0%','250%','>500%')
 col.labels.low <- c('-100%', '-95%', '-50%', '0%','50%','100%')
 col.percent <- colorRampPalette(c('blue', 'white', 'red'))
 col.percent.low <- colorRampPalette(c('blue', 'lightblue', 'white', 'red'))
 col.percent.ext1 <- colorRampPalette(c('blue', 'white', 'red', 'darkred'))
-col.percent.ext2 <- colorRampPalette(c('blue', 'white', 'red', 'red3'))
+col.percent.ext2 <- colorRampPalette(c('darkblue', 'blue', 'white', 'red', 'darkred'))
 ys <- list(at=seq(0,CODmax, by=50), labels=rep('', length(seq(0,CODmax, by=10))))
 xs <- list(at=seq(0, Nmax, by=15), labels=rep('', length(seq(0, Nmax, by=15))))
 gs <- list()
@@ -227,6 +228,7 @@ fig.no <- 5
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, CO2.equivs)
   d$CO2.equivs[d$CO2.equivs>5] <- 5
+  d$CO2.equivs[-5>d$CO2.equivs] <- -5
   p[[i]] <- levelplot(CO2.equivs ~ Nitrogen * Carbon, data=d,
                       par.settings=list(axis.text=list(fontfamily="serif")),
                       panel = function(...){
@@ -234,14 +236,14 @@ for (i in 1:(length(result)-1)) {
                         panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
                         panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
                       },
-                      at=c(seq(-1,1, length=100),seq(1+.01, 5, length=50)),
-                      col.regions=col.percent.ext1,
+                      at=seq(-5,5,by=.01),
+                      col.regions=col.percent.ext2,
                       xlab="", ylab="",
                       scales=list(cex=1, tck = c(1,0),
                                   x=xs,
                                   y=ys),
-                      colorkey = list(labels=list(cex=1,
-                                                  labels=col.labels.ext1)))
+                      colorkey = list(labels=list(cex=1,at=c(-5, -2.5, 0, 2.5, 5),
+                                                  labels=col.labels.ext2)))
   leg.list <- p[[i]]$legend$right$args$key
   leg13 <-  draw.colorkey(leg.list)
   leg13$children[[4]]$children[[1]]$gp$fontfamily <- 'serif'
@@ -272,59 +274,3 @@ grid.arrange(grobs = list(lab1, lab2, lab3, lab4,
                           textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob('') #Gaps
 ), layout_matrix = lay)
 dev.off()
-
-
-# Define High/Med/Low COD/N ratio
-qqO2.B = quantile(result$B$O2.demand, probs = seq(0, 1, 0.3333))
-qqO2.C = quantile(result$C$O2.demand, probs = seq(0, 1, 0.3333))
-qqO2.D = quantile(result$D$O2.demand, probs = seq(0, 1, 0.3333))
-
-
-
-### Not Used
-#= Plot external carbon addition
-# png('code/figures/CODadded.png', width=width, height=height, units='in', res=500)
-# fig.no <- 5
-# for (i in 1:(length(result)-1)) {
-#   d <- select(result[[i+1]], Nitrogen, Carbon, COD.added)
-#   p[[i]] <- levelplot(COD.added ~ Nitrogen * Carbon, data=d,
-#                       par.settings=list(axis.text=list(fontfamily="serif")),
-#                       panel = function(...){
-#                         panel.levelplot(...)
-#                         panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
-#                         panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
-#                       },
-#                       at=c(seq(-1,1, length=100), seq(1+.01, 7, length=50)),
-#                       col.regions=col.percent.ext1,
-#                       xlab="", ylab="",
-#                       scales=list(cex=1, tck = c(1,0),
-#                                   x=xs,
-#                                   y=ys),
-#                       colorkey = list(labels=list(cex=1,
-#                                                   labels=col.labels.ext1)))
-#   leg.list <- p[[i]]$legend$right$args$key
-#   leg13 <-  draw.colorkey(leg.list)
-#   leg13$children[[4]]$children[[1]]$gp$fontfamily <- 'serif'
-#   p[[i]] <- update(p[[i]], legend=NULL)
-# }
-# 
-# 
-# # Assign Methane Production graphs to layout
-# lab14 <- textGrob(expression('COD Added w/ respect to Base Case'), gp=gpar(cex=1.25, fontfamily='serif'))
-# lab19 <- textGrob(paste(fig.no, fig.labels[1], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-# lab20 <- textGrob(paste(fig.no, fig.labels[2], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-# lab21 <- textGrob(paste(fig.no, fig.labels[3], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-# lab22 <- textGrob(paste(fig.no, fig.labels[4], sep=''), gp=gpar(fontface='bold', fontfamily='serif'))
-# 
-# grid.arrange(grobs = list(lab1, lab2, lab3, lab4, # Plot titles
-#                           lab5, lab5, ax7, ax8, # X-Axis
-#                           ax9, lab10, ax9, lab10, # Y-Axis
-#                           leg13, # Colorbar
-#                           lab14,
-#                           p[[1]], p[[2]],p[[3]], p[[4]], # Plots
-#                           lab19, lab20, lab21, lab22,
-#                           textGrob(''), textGrob(''), textGrob('')
-# ), layout_matrix = lay)
-# dev.off()
-
-print(Y_anamx)

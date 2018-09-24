@@ -16,7 +16,6 @@ anamx_AnMBR <- function(df){
   
   
   
-  
   # Nitrification
   fN_AOB <- 1.3/2.3 # wt%, fraction of total N in converted by AOB, see appendix
   fN_NOB <- 0  # wt%, frac of totN converted by NOB, assumed 100% in anammox system # Make temp dependent?
@@ -32,21 +31,17 @@ anamx_AnMBR <- function(df){
   
   
   
-  
   # Mainstream Anaerobic Membrane Digester
   fCOD_AnMBR <- 1 # Assume 100% conversion of COD in AnMBR
   temp$px.AnMBR <- fCOD_AnMBR * temp$LCOD * Y_AnMBR * n_conv # kg/d
   temp$CH4prod.AnMBR <- fCOD_AnMBR * temp$LCOD * (1-Y_AnMBR) * CH4_COD # kg/d CH4 Produced from AnMBR
   
   # Dissolved vs. Gaseous Methane & CO2 Production
-  cCH4dis <- H * P * x_biogas_CH4 * MW_CH4 * 1000/1000  # Sat. Dissolved CH4 conc, kgCH4/m3
+  cCH4dis <- 5 * H * P * x_biogas_CH4 * MW_CH4  # 5x Sat. Dissolved CH4 conc, kgCH4/m3
   temp$LCH4diss <- cCH4dis * df$Flowrate * 10^3 # kg Dissolved, kg/d
   temp$CH4burn.AnMBR <- temp$CH4prod.AnMBR - temp$LCH4diss # Dissolved methane not avail for regen, kg/d
   temp$LCH4diss[which(temp$CH4burn.AnMBR<0)] <- temp$CH4prod.AnMBR[which(temp$CH4burn.AnMBR<0)] # If very little methane produced, assume all dissolves.
   temp$CH4burn.AnMBR[which(temp$CH4burn.AnMBR<0)] <- 0 # Then no methane avail for energy regen
-  temp$V.biogas.AnMBR <- temp$CH4prod.AnMBR / rho_CH4.main / x_biogas_CH4 # Volume of biogas produced m3/d
-  temp$V.CO2.AnMBR <- temp$V.biogas * (1 - x_biogas_CH4) # assume balance of biogas is CO2
-  temp$CO2.AnMBR <- temp$V.CO2.AnMBR / V.molgas.main * MW_CO2
   
   
   
@@ -59,38 +54,40 @@ anamx_AnMBR <- function(df){
     temp$CH4.MOB.ox <- 0
   }
   temp$LCH4 <- temp$LCH4 - temp$CH4.MOB.ox # Residual dissolved methane
-  temp$CO2.MOB <- temp$CH4.MOB.ox * sCO2_BURN # CO2 production by MOBs
   temp$O2.MOB <- temp$CH4.MOB.ox / CH4_COD # O2 demand by MOBs
   temp$px.MOB <- temp$CH4.MOB.ox / CH4_COD *  Y_MOB * n_conv # Sludge Production from MOBs
   
+  
   # Anaerobic Digester
-  temp$px.TOT <- rowSums(dplyr::select(temp, starts_with('px'))) #kg/d, total sludge produced
+  temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced
   temp$px.OUT <- temp$px.TOT * (1-fx_AD)
   temp$CH4prod.AD <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
   temp$CH4burn <- temp$CH4prod.AD + temp$CH4burn.AnMBR # Total methane produced from AnMBR + AD
-  temp$V.biogas.AD <- temp$CH4prod.AD / rho_CH4.dig / x_biogas_CH4
-  temp$V.CO2.AD <- temp$V.biogas.AD * (1 - x_biogas_CH4) # assume balance of biogas is CO2
-  temp$CO2.AD <- temp$V.CO2.AD / V.molgas.AD * MW_CO2
+  
+  
+  
+  
+  
   
 
   
   
+  # Total stoichiometric O2 Demand
+  temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) 
   
-  
-  
-  
-  temp$CO2.burn <- temp$CH4burn * sCO2_BURN * MW_CO2 / MW_CH4
-  
+  # Electricity Req'mts
+  temp$E.O2 <- temp$O2.TOT * e_O2
+  temp$E.SludgeThicken <- temp$px.OUT * e_SludgeThicken
+  temp$E.AnMBR <- temp$Flowrate * e_AnMBR
+  temp$E.CHP <- -temp$CH4burn * H_c_CH4 * n.CHP
+  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh + temp$LCH4 * CO2eq_CH4
+
   # Summary
-  temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) # Total stoichiometric O2 Demand
-  temp$CO2.TOT <-  rowSums(select(temp, starts_with('CO2.'),-matches('CO2.burn'))) + (temp$LCH4) * CO2eq_CH4
-  
   df$scenario <- rep('C', times=nrow(temp))
   df$COD.added <- 0
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
-  df$CH4.dissolved <- temp$LCH4
   df$CH4.burn <- temp$CH4burn
-  df$CO2.equivs  <- temp$CO2.TOT
+  df$CO2.equivs  <- temp$CO2
   return(df)
 }
