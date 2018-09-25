@@ -49,11 +49,12 @@ N_cent <<- 0.25
 
 # Electricity Generation
 kgCO2.kWh <<- 0.47 # kgCO2/kWh
-e_SludgeThicken <<- .045 #kWh/kg Sludge
-e_O2 <<- 1/.7 #kWh/kgO2
+e_Base <<- 254 #kWh/ML
+e_Solids <<- 3.7 #kWh/kgVSS
+e_O2 <<- 1.5 #kWh/kgO2
 e_AnMBR <<- 190 #kWh/ML
-H_c_CH4 <<- 15.4 #kWh/kg
-n.CHP <<- 0.33
+e_Mix <<- 28 #kWh/ML
+e_cogen <<- -0.7 #kWh/kgCH4
 
 scenarios <- function(Q, cNin, cCODin, 
                       compare=TRUE, expand=TRUE){
@@ -76,10 +77,10 @@ scenarios <- function(Q, cNin, cCODin,
   #== Compare all theoretical scenarios to base case MLE if true
   if (compare) {
     #= Calculate Sludge Production/O2 Demand as fraction of MLE
-    df.B[, c(7:11)] <- (df.B[, c(7:11)]-df.A[, c(7:11)])/df.A[, c(7:11)]
-    df.C[, c(7:11)] <- (df.C[, c(7:11)]-df.A[, c(7:11)])/df.A[, c(7:11)]
-    df.D[, c(7:11)] <- (df.D[, c(7:11)]-df.A[, c(7:11)])/df.A[, c(7:11)]
-    df.E[, c(7:11)] <- (df.E[, c(7:11)]-df.A[, c(7:11)])/df.A[, c(7:11)]
+    df.B[, c(7:11)] <- (df.B[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
+    df.C[, c(7:11)] <- (df.C[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
+    df.D[, c(7:11)] <- (df.D[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
+    df.E[, c(7:11)] <- (df.E[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
     
   }
   

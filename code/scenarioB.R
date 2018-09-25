@@ -76,10 +76,12 @@ anamx <- function(df){
   temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) # Total stoichiometric O2 Demand
   
   # Electricity Req'mts
+  temp$E.base <- temp$Flowrate * e_Base
   temp$E.O2 <- temp$O2.TOT * e_O2
-  temp$E.SludgeThicken <- temp$px.OUT * e_SludgeThicken
+  temp$E.Solids <- temp$px.OUT * e_Solids
+  temp$E.Mix <- temp$Flowrate * e_Mix
   
-  temp$E.CHP <- -temp$CH4prod.AD * H_c_CH4 * n.CHP
+  temp$E.CHP <- temp$CH4prod.AD * e_cogen
   temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh
   
   # Summary

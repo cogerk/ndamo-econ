@@ -11,7 +11,7 @@ require(extrafont)
 #== Set up conditions to run
 Nmax <- 60
 Nmin <- 0.6
-CODmax <- 400914
+CODmax <- 400
 CODmin <- 4
 Qmax <- 600
 cNin <- seq(Nmin, Nmax, length=100) # Nitrogen concentration varies
@@ -31,7 +31,7 @@ lattice.options(layout.widths = lw, layout.heights = lh)
 # Set up labels
 col.labels <- c('-100%', '-50%', '0%','50%','100%')
 col.labels.ext1 <- c('-100%', '0%', '100%','200%','300%','400%','>500%')
-col.labels.ext2 <- c('<-500%', '-250%','0%','250%','>500%')
+col.labels.ext2 <- c('<-200%', '-100%','0%','100%','>200%')
 col.labels.low <- c('-100%', '-95%', '-50%', '0%','50%','100%')
 col.percent <- colorRampPalette(c('blue', 'white', 'red'))
 col.percent.low <- colorRampPalette(c('blue', 'lightblue', 'white', 'red'))
@@ -68,7 +68,7 @@ p <- list()
 
 #= Plot Oxygen Demand
 png('code/figures/O2 Demand.png', width=width, height=height, units='in', res=750)
-fig.no <- 2
+fig.no <- 2 
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, O2.demand)
   p[[i]] <- levelplot(O2.demand ~ Nitrogen * Carbon, data=d,
@@ -227,8 +227,8 @@ png('code/figures/GHG.png', width=width, height=height, units='in', res=500)
 fig.no <- 5
 for (i in 1:(length(result)-1)) {
   d <- select(result[[i+1]], Nitrogen, Carbon, CO2.equivs)
-  d$CO2.equivs[d$CO2.equivs>5] <- 5
-  d$CO2.equivs[-5>d$CO2.equivs] <- -5
+  d$CO2.equivs[d$CO2.equivs>2] <- 2
+  d$CO2.equivs[-2>d$CO2.equivs] <- -2
   p[[i]] <- levelplot(CO2.equivs ~ Nitrogen * Carbon, data=d,
                       par.settings=list(axis.text=list(fontfamily="serif")),
                       panel = function(...){
@@ -236,13 +236,13 @@ for (i in 1:(length(result)-1)) {
                         panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
                         panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
                       },
-                      at=seq(-5,5,by=.01),
+                      at=seq(-2,2,by=.01),
                       col.regions=col.percent.ext2,
                       xlab="", ylab="",
                       scales=list(cex=1, tck = c(1,0),
                                   x=xs,
                                   y=ys),
-                      colorkey = list(labels=list(cex=1,at=c(-5, -2.5, 0, 2.5, 5),
+                      colorkey = list(labels=list(cex=1,at=c(-2, -1, 0,1, 2),
                                                   labels=col.labels.ext2)))
   leg.list <- p[[i]]$legend$right$args$key
   leg13 <-  draw.colorkey(leg.list)
