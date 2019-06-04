@@ -84,6 +84,9 @@ MLE <- function(df) {
   temp$E.CHP <- temp$CH4prod.AD * e_cogen
   temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh
   
+  # Cost
+  temp$cost <- temp$COD_added * .29 + temp$px.OUT * .31 - temp$CH4prod.AD* .36 + temp$O2.TOT * 0.052
+  
   # Summary
   df$scenario <- rep('A', times=nrow(temp))
   df$COD.added <- temp$COD_added
@@ -91,5 +94,6 @@ MLE <- function(df) {
   df$O2.demand <- temp$O2.TOT
   df$CH4.burn <- temp$CH4prod.AD
   df$CO2.equivs  <- temp$CO2
+  df$cost  <- temp$cost
   return(df)
 }

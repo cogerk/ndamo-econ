@@ -84,6 +84,9 @@ anamx_NDAMO_AnMBR <- function(df){
   temp$E.CHP <- temp$CH4burn * e_cogen
   temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh + (temp$LCH4 + temp$CH4.fromNIT)  * CO2eq_CH4  
   
+  # Cost
+  temp$cost <- temp$px.OUT * .31 - temp$CH4burn * .36 + temp$O2.TOT * 0.052 + temp$Flowrate * e_AnMBR * 0.078 + temp$COD.added *.142
+  
   #Summary
   df$scenario <- rep('E', times=nrow(temp))
   df$COD.added <- temp$COD.added
@@ -91,5 +94,6 @@ anamx_NDAMO_AnMBR <- function(df){
   df$O2.demand <- temp$O2.TOT
   df$CH4.burn <- temp$CH4burn
   df$CO2.equivs  <- temp$CO2
+  df$cost  <- temp$cost
   return(df)
 }

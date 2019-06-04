@@ -84,12 +84,16 @@ anamx <- function(df){
   temp$E.CHP <- temp$CH4prod.AD * e_cogen
   temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh
   
+  # Cost
+  temp$cost <- temp$px.OUT * .31 - temp$CH4prod.AD* .36 + temp$O2.TOT * 0.052
+  
   # Summary
   df$scenario <- rep('B', times=nrow(temp))
-  df$COD.added <- rep(0, times=nrow(temp))
+  df$COD.added <- 0
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
   df$CH4.burn <- temp$CH4prod.AD
   df$CO2.equivs  <- temp$CO2
+  df$cost  <- temp$cost
   return(df)
 }

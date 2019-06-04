@@ -82,6 +82,11 @@ scenarios <- function(Q, cNin, cCODin,
     df.D[, c(7:11)] <- (df.D[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
     df.E[, c(7:11)] <- (df.E[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
     
+    df.B$cost <- (df.A$cost-df.B$cost)
+    df.C$cost <- (df.A$cost-df.C$cost)
+    df.D$cost <- (df.A$cost-df.D$cost)
+    df.E$cost <- (df.A$cost-df.E$cost)
+    
   }
   
   
