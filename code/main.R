@@ -8,9 +8,9 @@ require(grid)
 require(extrafont)
 
 
-font <- 'serif'
-width <- 7.5
-height <- 6.5
+font <- 'sans'
+width <- 11
+height <- 7
 
 #== Set up conditions to run
 Nmax <- 60
