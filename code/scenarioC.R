@@ -1,4 +1,4 @@
-anamx_AnMBR <- function(df){
+anamx_AnMBR <- function(df, e_Base=e_Base_std){
   # Mass and energy balance for mainstream anaerobic membrane bioreactor 
   # with Anammox nitrogen removal system.
   # Kathryn Cogert 12/6/15
@@ -61,9 +61,9 @@ anamx_AnMBR <- function(df){
   # Anaerobic Digester
   temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced
   temp$px.OUT <- temp$px.TOT * (1-fx_AD)
-  temp$CH4prod.AD <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
-  temp$CH4burn <- temp$CH4prod.AD + temp$CH4burn.AnMBR # Total methane produced from AnMBR + AD
-  
+  temp$V.Biogas.AD <- (temp$px.TOT - temp$px.OUT) * BG
+  temp$M.CH4.AD <-  temp$V.Biogas.AD * x_biogas_CH4 * rho_BG_dig
+  temp$CH4burn <- temp$M.CH4.AD + temp$CH4burn.AnMBR # Total methane produced from AnMBR + AD
   
   
   
@@ -79,14 +79,14 @@ anamx_AnMBR <- function(df){
   temp$E.base <- temp$Flowrate * e_Base
   temp$E.O2 <- temp$O2.TOT * e_O2
   temp$E.Solids <- temp$px.OUT * e_Solids
-  temp$E.Mix <- temp$Flowrate * e_Mix
+
   temp$E.AnMBR <- temp$Flowrate * e_AnMBR
   temp$E.CHP <- temp$CH4burn * e_cogen
   temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh + temp$LCH4 * CO2eq_CH4
 
   # Cost
-  temp$cost <- temp$px.OUT * .31 - temp$CH4burn * .36 + temp$O2.TOT * 0.052 +  temp$Flowrate * e_AnMBR * 0.078
-  
+  temp$cost <- temp$px.OUT * C_solids + temp$CH4burn * C_CH4_prod + temp$O2.TOT * C_O2 + 
+     (temp$E.base + temp$E.AnMBR) * C_electricity
   # Summary
   df$scenario <- rep('C', times=nrow(temp))
   df$COD.added <- 0

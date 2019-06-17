@@ -1,4 +1,4 @@
-anamx <- function(df){
+anamx <- function(df, e_Base=e_Base_std){
 # Mass and energy balance for an Anammox CANON system and High Rate BOD Removal
 # By Kathryn Cogert
 # Kathryn Cogert 12/6/15
@@ -61,9 +61,8 @@ anamx <- function(df){
   # Anaerobic Digester
   temp$px.TOT <- rowSums(dplyr::select(temp, starts_with('px'))) #kg/d, total sludge produced
   temp$px.OUT <- temp$px.TOT * (1-fx_AD)
-  temp$CH4prod.AD <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
-  
-  temp$V.biogas.AD <- temp$CH4prod.AD / rho_CH4.dig / x_biogas_CH4
+  temp$V.Biogas.AD <- (temp$px.TOT - temp$px.OUT) * BG
+  temp$M.CH4.AD <- temp$V.Biogas.AD * x_biogas_CH4 * rho_BG_dig
   
   # No Methane addition for NDAMO Required, 
   # Therefore these lines are left blank
@@ -79,20 +78,19 @@ anamx <- function(df){
   temp$E.base <- temp$Flowrate * e_Base
   temp$E.O2 <- temp$O2.TOT * e_O2
   temp$E.Solids <- temp$px.OUT * e_Solids
-  temp$E.Mix <- temp$Flowrate * e_Mix
   
-  temp$E.CHP <- temp$CH4prod.AD * e_cogen
+  temp$E.CHP <- temp$M.CH4.AD * e_cogen
   temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh
   
   # Cost
-  temp$cost <- temp$px.OUT * .31 - temp$CH4prod.AD* .36 + temp$O2.TOT * 0.052
-  
+  temp$cost <- temp$px.OUT * C_solids + temp$M.CH4.AD * C_CH4_prod + 
+    temp$O2.TOT * C_O2 + temp$E.base * C_electricity
   # Summary
   df$scenario <- rep('B', times=nrow(temp))
   df$COD.added <- 0
   df$sludge.out <- temp$px.OUT
   df$O2.demand <- temp$O2.TOT
-  df$CH4.burn <- temp$CH4prod.AD
+  df$CH4.burn <- temp$M.CH4.AD
   df$CO2.equivs  <- temp$CO2
   df$cost  <- temp$cost
   return(df)

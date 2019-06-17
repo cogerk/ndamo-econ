@@ -46,17 +46,27 @@ Y_MOB <<- 0.19      # gCOD/gCOD
 fx_AD <<- 0.59 # Assumed digester sludge conversion
 x_biogas_CH4 <<- 0.62 # Typical concentration of CH4 in biogas
 N_cent <<- 0.25
+BG <<- 0.75 #Produced biogas per kgVSS destroyed
+rho_BG_dig <<- 0.86 # Density of biogas at STP kg/m3
 
-# Electricity Generation
+# Electrical Demand
 kgCO2.kWh <<- 0.47 # kgCO2/kWh
-e_Base <<- 254 #kWh/ML
-e_Solids <<- 3.7 #kWh/kgVSS
+e_Base_std <<- 93 #kWh/ML
+e_Solids <<- 2.4 #kWh/kgVSS
 e_O2 <<- 1.5 #kWh/kgO2
 e_AnMBR <<- 190 #kWh/ML
 e_Mix <<- 28 #kWh/ML
-e_cogen <<- -0.7 #kWh/kgCH4
+e_cogen <<- -2.2 #kWh/kgCH4
 
-scenarios <- function(Q, cNin, cCODin, 
+# Cost Factors
+C_electricity <- 0.078
+C_solids <<- -0.19
+C_O2 <<- -e_O2 * C_electricity
+C_CH4_added <<- -0.13
+C_CH3OH_added <<- -0.29
+C_CH4_prod <<- -e_cogen* C_electricity
+
+scenarios <- function(Q, cNin, cCODin, e_Base=e_Base_std,
                       compare=TRUE, expand=TRUE){
   
   #== Run at all combinations of values in N & C vectors if true
@@ -69,10 +79,10 @@ scenarios <- function(Q, cNin, cCODin,
 
   #== Run Scenarios 
   df.A <- MLE(df)
-  df.B <- anamx(df)
-  df.C <- anamx_AnMBR(df)
-  df.D <- anamx_NDAMO(df)
-  df.E <- anamx_NDAMO_AnMBR(df)
+  df.B <- anamx(df, e_Base=e_Base)
+  df.C <- anamx_AnMBR(df, e_Base=e_Base)
+  df.D <- anamx_NDAMO(df, e_Base=e_Base)
+  df.E <- anamx_NDAMO_AnMBR(df, e_Base=e_Base)
   
   #== Compare all theoretical scenarios to base case MLE if true
   if (compare) {
@@ -82,10 +92,10 @@ scenarios <- function(Q, cNin, cCODin,
     df.D[, c(7:11)] <- (df.D[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
     df.E[, c(7:11)] <- (df.E[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
     
-    df.B$cost <- (df.A$cost-df.B$cost)
-    df.C$cost <- (df.A$cost-df.C$cost)
-    df.D$cost <- (df.A$cost-df.D$cost)
-    df.E$cost <- (df.A$cost-df.E$cost)
+    df.B$cost <- -(df.A$cost-df.B$cost)
+    df.C$cost <- -(df.A$cost-df.C$cost)
+    df.D$cost <- -(df.A$cost-df.D$cost)
+    df.E$cost <- -(df.A$cost-df.E$cost)
     
   }
   

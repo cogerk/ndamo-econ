@@ -1,4 +1,4 @@
-anamx_NDAMO<- function(df){
+anamx_NDAMO<- function(df, e_Base=e_Base_std){
   # Mass and energy balance for anammox/NDAMO system
   # Kathryn Cogert 12/6/15
 
@@ -61,18 +61,18 @@ anamx_NDAMO<- function(df){
   # Anaerobic Digester
   temp$px.TOT <- rowSums(select(temp, starts_with('px'))) #kg/d, total sludge produced
   temp$px.OUT <- temp$px.TOT * (1-fx_AD)
-  temp$CH4prod <- (temp$px.TOT - temp$px.OUT)/ n_conv * CH4_COD
-  
+  temp$V.Biogas.AD <- (temp$px.TOT - temp$px.OUT) * BG
+  temp$M.CH4.AD <-  temp$V.Biogas.AD * x_biogas_CH4 * rho_BG_dig
   
   # Methane Addition for NDAMO/Methane Production for Energy Regeneration
   
-  temp$CH4burn <- temp$CH4prod - temp$LCH4_cons # kg Dissolved after NDAMO consume, kg/d
+  temp$CH4burn <- temp$M.CH4.AD - temp$LCH4_cons # kg Dissolved after NDAMO consume, kg/d
   
   temp$COD.added <- 0
   temp$COD.added[which(temp$CH4burn<0)] <- -temp$CH4burn[which(temp$CH4burn<0)] / CH4_COD  # if need more than produced, get externally
   temp$CH4burn[which(temp$CH4burn<0)] <- 0 # if need more than produced, prodCH4  = 0
   
-  # Total stoichiometric O2 Demand
+  # Total stoichiometric O2 sDemand
   temp$O2.TOT <- rowSums(select(temp, starts_with('O2'))) 
  
   # Electricity Req'mts
@@ -85,8 +85,8 @@ anamx_NDAMO<- function(df){
   temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh
   
   # Cost
-  temp$cost <- temp$px.OUT * .31 - temp$CH4burn * .36 + temp$O2.TOT * 0.052 + temp$COD.added *.142
-  
+  temp$cost <- temp$px.OUT * C_solids  + temp$CH4burn * C_CH4_prod + temp$O2.TOT * C_O2 + 
+    temp$COD.added * C_CH4_added + (temp$E.Mix + temp$E.base) * C_electricity
   #Summary
   df$scenario <- rep('D', times=nrow(temp))
   df$COD.added <- temp$COD.added
