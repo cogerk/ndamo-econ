@@ -82,11 +82,11 @@ MLE <- function(df) {
   temp$E.Mix <- temp$Flowrate * e_Mix
   
   temp$E.CHP <- temp$M.CH4.AD * e_cogen
-  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh
+  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh +  temp$COD_added * sCH3OH_CO2
   
   # Cost
   temp$cost <- temp$M.CH4.AD * C_CH4_prod + temp$COD_added * C_CH3OH_added + 
-    temp$px.OUT * C_solids + temp$O2.TOT * C_O2 + (temp$E.Mix + temp$E.base) * C_electricity
+    temp$px.OUT * C_solids + temp$O2.TOT * C_O2 + (temp$E.Mix + temp$E.base) * -C_electricity
   # Summary
   df$scenario <- rep('A', times=nrow(temp))
   df$COD.added <- temp$COD_added

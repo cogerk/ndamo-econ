@@ -69,7 +69,7 @@ anamx_NDAMO_AnMBR <- function(df, e_Base=e_Base_std){
   temp$CH4burn[which(temp$LCH4<0)] <- temp$CH4burn[which(temp$LCH4<0)] + temp$LCH4[which(temp$LCH4<0)] # if need more than dissolved, take it from CH4 gas
   temp$LCH4[which(temp$LCH4<0)] <- 0 # if need more than dissolved, dissolved CH4 = 0
   temp$COD.added <- 0
-  temp$COD.added[which(temp$CH4burn<0)] <- -temp$CH4burn[which(temp$CH4burn<0)] / CH4_COD  # if need more than produced, get externally
+  temp$COD.added[which(temp$CH4burn<0)] <- -temp$CH4burn[which(temp$CH4burn<0)] / CH4_COD  # if need more than produced, get externally, COD Basis
   temp$CH4burn[which(temp$CH4burn<0)] <- 0 # if need more than produced, prodCH4  = 0
  
   # Total stoichiometric O2 Demand
@@ -82,11 +82,11 @@ anamx_NDAMO_AnMBR <- function(df, e_Base=e_Base_std){
   temp$E.Mix <- temp$Flowrate * e_Mix
   temp$E.AnMBR <- temp$Flowrate * e_AnMBR
   temp$E.CHP <- temp$CH4burn * e_cogen
-  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh + (temp$LCH4 + temp$CH4.fromNIT)  * CO2eq_CH4  
+  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh + (temp$LCH4 + temp$CH4.fromNIT)  * CO2eq_CH4  + temp$COD.added * sCH4_CO2
   
   # Cost
   temp$cost <- temp$px.OUT * C_solids + temp$CH4burn * C_CH4_prod + temp$O2.TOT * C_O2 + 
-    temp$COD.added *C_CH4_added  + (temp$E.Mix + temp$E.base + temp$E.AnMBR) * C_electricity
+    temp$COD.added * C_CH4_added  + (temp$E.Mix + temp$E.base + temp$E.AnMBR) * -C_electricity
 
   #Summary
   df$scenario <- rep('E', times=nrow(temp))

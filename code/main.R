@@ -28,10 +28,10 @@ col.bar.range.lab.at <- seq(-20000,20000,length=5)
 col.bar.lab <- '$ Saved from Base Case (MLE)'
 graph.title <- 'Total Reduction in Primary Cost Factors from the Base Case (MLE)'
 fig.no<-2
-draw_graph(CODmax, Nmax, font, result, select_var='cost', max=Inf, min=-Inf,
+ggsave('code/figures/Cost.png', plot = draw_graph(CODmax, Nmax, font, result, select_var='cost', max=Inf, min=-Inf,
            col.percent, col.bar.range, col.bar.range.lab, 
            col.bar.range.lab.at, col.bar.lab, 
-           fig.no, graph.title)
+           fig.no, graph.title), width=width, height=height)
 
 #= Plot GHG
 col.percent <- colorRampPalette(c('darkblue','blue', 'white', 'red', 'darkred'))
@@ -41,11 +41,10 @@ col.bar.range.lab.at <- c(-5, -1, 0, 1, 5)
 col.bar.lab <- '% Difference from Base Case'
 graph.title <- 'GHG Production w/ respect to the Base Case (MLE)'
 fig.no<-3
-ghg_graph <- draw_graph(CODmax, Nmax, font, result, select_var='CO2.equivs', max=5, min=-5,
+ggsave('code/figures/GHG.png', draw_graph(CODmax, Nmax, font, result, select_var='CO2.equivs', max=5, min=-5,
            col.percent, col.bar.range, col.bar.range.lab, 
            col.bar.range.lab.at, col.bar.lab, 
-           fig.no, graph.title)
-
+           fig.no, graph.title), width=width, height=height)
 
 #= Plot O2 Demand
 col.percent <- colorRampPalette(c('blue', 'white', 'red' ))
@@ -55,10 +54,10 @@ col.bar.range.lab.at <- c(-1, -0.5, 0, 0.5, 1)
 col.bar.lab <- '% Difference from Base Case'
 graph.title <- 'Oxygen Demand w/ respect to the Base Case (MLE)'
 fig.no<-'S6'
-o2_graph <- draw_graph(CODmax, Nmax, font, result, select_var='O2.demand', max=Inf, min=-Inf,
+ggsave('code/figures/O2 Demand.png', draw_graph(CODmax, Nmax, font, result, select_var='O2.demand', max=Inf, min=-Inf,
                         col.percent, col.bar.range, col.bar.range.lab, 
                         col.bar.range.lab.at, col.bar.lab, 
-                        fig.no, graph.title)
+                        fig.no, graph.title), width=width, height=height)
 
 #= Plot Sludge Demand
 col.percent <- colorRampPalette(c('blue', 'white', 'red' ))
@@ -68,10 +67,10 @@ col.bar.range.lab.at <- c(-1, -0.5, 0, 0.5, 1)
 col.bar.lab <- '% Difference from Base Case'
 graph.title <- 'Sludge Production w/ respect to the Base Case (MLE)'
 fig.no<-'S7'
-sludge_graph <- draw_graph(CODmax, Nmax, font, result, select_var='sludge.out', max=Inf, min=-Inf,
+ggsave('code/figures/Sludge Production.png', draw_graph(CODmax, Nmax, font, result, select_var='sludge.out', max=Inf, min=-Inf,
                        col.percent, col.bar.range, col.bar.range.lab, 
                        col.bar.range.lab.at, col.bar.lab, 
-                       fig.no, graph.title)
+                       fig.no, graph.title), width=width, height=height)
 
 #= Plot Methane Production
 col.percent <- colorRampPalette(c('red', 'white', 'blue', 'darkblue'))
@@ -81,7 +80,7 @@ col.bar.range.lab.at <- c(-1, 0, 1, 2.5, 5)
 col.bar.lab <- '% Difference from Base Case'
 graph.title <- 'Methane Production w/ respect to the Base Case (MLE)'
 fig.no<-'S8'
-sludge_graph <- draw_graph(CODmax, Nmax, font, result, select_var='CH4.burn', max=5, min=-Inf,
+ggsave('code/figures/Methane Production.png', draw_graph(CODmax, Nmax, font, result, select_var='CH4.burn', max=5, min=-Inf,
                            col.percent, col.bar.range, col.bar.range.lab, 
                            col.bar.range.lab.at, col.bar.lab, 
-                           fig.no, graph.title)
+                           fig.no, graph.title), width=width, height=height)

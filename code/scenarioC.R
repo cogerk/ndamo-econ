@@ -86,7 +86,7 @@ anamx_AnMBR <- function(df, e_Base=e_Base_std){
 
   # Cost
   temp$cost <- temp$px.OUT * C_solids + temp$CH4burn * C_CH4_prod + temp$O2.TOT * C_O2 + 
-     (temp$E.base + temp$E.AnMBR) * C_electricity
+     (temp$E.base + temp$E.AnMBR) * -C_electricity
   # Summary
   df$scenario <- rep('C', times=nrow(temp))
   df$COD.added <- 0

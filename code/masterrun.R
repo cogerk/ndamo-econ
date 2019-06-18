@@ -20,6 +20,8 @@ sCOD_DENIT <<- 5 # gCOD/gN, gCOD required per gN eaten by denitrifiers
 sO2_AOB <<- 1.5 # Oxygen stoich coeff AOB 
 sO2_NOB <<- 0.5 # Oxygen stoich coeff NOB
 sCH4_NDAMO <<- 0.25 # stoich coeff of methane/nitrate for NDAMO    
+sCH3OH_CO2 <<- 0.92 # kg CO2 released from oxidizing 1 kg of added methanol
+sCH4_CO2 <<- 0.69 # kg CO2 released from oxidizing 1 kg of added methane
 
 # Temperature, Pressure, and pH impacts are largely not relevant to this model. 
 T.mainstream <<- 20 # Degrees C, assumed
@@ -62,8 +64,8 @@ e_cogen <<- -2.2 #kWh/kgCH4
 C_electricity <- 0.078
 C_solids <<- -0.19
 C_O2 <<- -e_O2 * C_electricity
-C_CH4_added <<- -0.13
-C_CH3OH_added <<- -0.29
+C_CH4_added <<- -0.03 # COD Basis
+C_CH3OH_added <<- -0.29 # COD Basis
 C_CH4_prod <<- -e_cogen* C_electricity
 
 scenarios <- function(Q, cNin, cCODin, e_Base=e_Base_std,

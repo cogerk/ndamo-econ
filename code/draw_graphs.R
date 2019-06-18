@@ -81,7 +81,7 @@ draw_graph <- function(CODmax, Nmax, font, result, select_var, max, min,
   lab4 <- textGrob(paste(paste(fig.no, fig.labels[4], sep=''), lab4.name),
                    gp=gpar(fontfamily=font))
   
-  grid.arrange(grobs = list(lab1, lab2, lab3, lab4,
+  return(grid.arrange(grobs = list(lab1, lab2, lab3, lab4,
                             lab5, lab5, ax7, ax8, # X-Axis, Bottom, 5,6,7,8
                             ax9, lab10, ax9, lab10, # Y-Axis left, 9,10,11,12
                             leg13,  # Colorbar, 13
@@ -91,7 +91,7 @@ draw_graph <- function(CODmax, Nmax, font, result, select_var, max, min,
                             lab23, # Colorbar Label, 23
                             lab10, ax9, lab10, ax9, # Y-Axis right, 24,25,26,27
                             textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob('') #Gaps
-  ), layout_matrix = lay)
+  ), layout_matrix = lay))
 
 }
 
