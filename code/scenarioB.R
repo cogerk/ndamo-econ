@@ -1,4 +1,4 @@
-anamx <- function(df, e_Base=e_Base_std){
+anamx <- function(df, e_Base=e_Base_std, N2O_AobAmx=N2O_AobAmx_base){
 # Mass and energy balance for an Anammox CANON system and High Rate BOD Removal
 # By Kathryn Cogert
 # Kathryn Cogert 12/6/15
@@ -80,7 +80,7 @@ anamx <- function(df, e_Base=e_Base_std){
   temp$E.Solids <- temp$px.OUT * e_Solids
   
   temp$E.CHP <- temp$M.CH4.AD * e_cogen
-  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh
+  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh + temp$LN * N2O_AobAmx * CO2eq_N2O
   
   # Cost
   temp$cost <- temp$px.OUT * C_solids + temp$M.CH4.AD * C_CH4_prod + 

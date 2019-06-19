@@ -1,4 +1,4 @@
-MLE <- function(df) {
+MLE <- function(df, N2O_NitDenit_CODNbasis=N2O_NitDenit_CODNbasis_base) {
 # Mass and energy balance for an MLE system
 # By Kathryn Cogert
 # Kathryn Cogert 12/6/15
@@ -82,8 +82,9 @@ MLE <- function(df) {
   temp$E.Mix <- temp$Flowrate * e_Mix
   
   temp$E.CHP <- temp$M.CH4.AD * e_cogen
-  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh +  temp$COD_added * sCH3OH_CO2
-  
+  temp$CODNratio <- ifelse(temp$Carbon/temp$Nitrogen<0.2, 0.2, temp$Carbon/temp$Nitrogen)
+  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh +  temp$COD_added * sCH3OH_CO2 + 
+    (N2O_NitDenit_CODNbasis[1] * temp$CODNratio + N2O_NitDenit_CODNbasis[2]) * temp$LN * CO2eq_N2O
   # Cost
   temp$cost <- temp$M.CH4.AD * C_CH4_prod + temp$COD_added * C_CH3OH_added + 
     temp$px.OUT * C_solids + temp$O2.TOT * C_O2 + (temp$E.Mix + temp$E.base) * -C_electricity

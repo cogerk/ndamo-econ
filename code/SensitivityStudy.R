@@ -15,7 +15,16 @@ Q <- 60 # constant flow rate
 #result_1 <- scenarios(Q, Nmax/2, CODmax/2, compare=TRUE)
 #result_SS1 <- scenarios(Q, Nmax/2, CODmax/2, e_Base=200, compare=TRUE)
 
+result_SS_Base <- scenarios(Q, cNin, cCODin, compare=TRUE)
 result_SS <- scenarios(Q, cNin, cCODin, e_Base=90*5, compare=TRUE)
+result_SS_compare <- result_SS
+
+for (i in 1:(length(result_SS_Base)-1)) {
+  for(j in 7:length(result_SS_Base$A)) {
+    result_SS_compare[[i+1]][j] <- 1- result_SS[[i+1]][j]/result_SS_Base[[i+1]][j]
+  }
+}
+
 
 #= Plot Cost 
 col.percent <- colorRampPalette(c('darkred','red', 'white', 'blue', 'darkblue'))
@@ -42,3 +51,8 @@ draw_graph(CODmax, Nmax, font, result_SS, select_var='CO2.equivs', max=5, min=-5
                                           col.percent, col.bar.range, col.bar.range.lab, 
                                           col.bar.range.lab.at, col.bar.lab, 
                                           fig.no, graph.title)
+
+draw_graph(CODmax, Nmax, font, result_SS_compare, select_var='CO2.equivs', max=5, min=-5,
+           col.percent, col.bar.range, col.bar.range.lab, 
+           col.bar.range.lab.at, col.bar.lab, 
+           fig.no, graph.title)

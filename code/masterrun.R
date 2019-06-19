@@ -13,7 +13,8 @@ MW_N <<- 14
 CH4_COD <<- 4
 n_conv <<- 1.48          # gVSS/gCOD, conversion constant
 H <- 0.0015 # Henry's Constant for methane
-CO2eq_CH4 <<- 34 
+CO2eq_CH4 <<- 34
+CO2eq_N2O <<- 298
 
 # Stoichiometry
 sCOD_DENIT <<- 5 # gCOD/gN, gCOD required per gN eaten by denitrifiers
@@ -60,6 +61,11 @@ e_AnMBR <<- 190 #kWh/ML
 e_Mix <<- 28 #kWh/ML
 e_cogen <<- -2.2 #kWh/kgCH4
 
+# N2O Production Factors
+N2O_NitDenit_CODNbasis_base <<- c(0,0)#c(-.00771, 0.122) # kgN2O produced/influent N to BNR
+N2O_AobAmx_base <<- 0#0.002
+N2O_Nit_base <<- 0
+
 # Cost Factors
 C_electricity <- 0.078
 C_solids <<- -0.19
@@ -68,7 +74,10 @@ C_CH4_added <<- -0.03 # COD Basis
 C_CH3OH_added <<- -0.29 # COD Basis
 C_CH4_prod <<- -e_cogen* C_electricity
 
-scenarios <- function(Q, cNin, cCODin, e_Base=e_Base_std,
+scenarios <- function(Q, cNin, cCODin, e_Base=e_Base_std, 
+                      N2O_NitDenit_CODNbasis=N2O_NitDenit_CODNbasis_base,
+                      N2O_AobAmx=N2O_AobAmx_base,
+                      N2O_Nit=N2O_Nit_base,
                       compare=TRUE, expand=TRUE){
   
   #== Run at all combinations of values in N & C vectors if true
@@ -80,11 +89,11 @@ scenarios <- function(Q, cNin, cCODin, e_Base=e_Base_std,
   
 
   #== Run Scenarios 
-  df.A <- MLE(df)
-  df.B <- anamx(df, e_Base=e_Base)
-  df.C <- anamx_AnMBR(df, e_Base=e_Base)
-  df.D <- anamx_NDAMO(df, e_Base=e_Base)
-  df.E <- anamx_NDAMO_AnMBR(df, e_Base=e_Base)
+  df.A <- MLE(df, N2O_NitDenit_CODNbasis=N2O_NitDenit_CODNbasis)
+  df.B <- anamx(df, e_Base=e_Base, N2O_AobAmx=N2O_AobAmx)
+  df.C <- anamx_AnMBR(df, e_Base=e_Base, N2O_AobAmx=N2O_AobAmx)
+  df.D <- anamx_NDAMO(df, e_Base=e_Base, N2O_Nit=N2O_Nit)
+  df.E <- anamx_NDAMO_AnMBR(df, e_Base=e_Base, N2O_Nit=N2O_Nit)
   
   #== Compare all theoretical scenarios to base case MLE if true
   if (compare) {

@@ -1,4 +1,4 @@
-anamx_NDAMO<- function(df, e_Base=e_Base_std){
+anamx_NDAMO<- function(df, e_Base=e_Base_std, N2O_Nit=N2O_Nit_base){
   # Mass and energy balance for anammox/NDAMO system
   # Kathryn Cogert 12/6/15
 
@@ -82,7 +82,7 @@ anamx_NDAMO<- function(df, e_Base=e_Base_std){
   temp$E.Mix <- temp$Flowrate * e_Mix
   
   temp$E.CHP <- temp$CH4burn * e_cogen
-  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh + temp$COD.added * sCH4_CO2
+  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh + temp$COD.added * sCH4_CO2 + N2O_Nit * temp$LN * CO2eq_N2O
   
   # Cost
   temp$cost <- temp$px.OUT * C_solids  + temp$CH4burn * C_CH4_prod + temp$O2.TOT * C_O2 + 

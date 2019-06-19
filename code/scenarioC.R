@@ -1,4 +1,4 @@
-anamx_AnMBR <- function(df, e_Base=e_Base_std){
+anamx_AnMBR <- function(df, e_Base=e_Base_std, N2O_AobAmx=N2O_AobAmx_base){
   # Mass and energy balance for mainstream anaerobic membrane bioreactor 
   # with Anammox nitrogen removal system.
   # Kathryn Cogert 12/6/15
@@ -82,7 +82,7 @@ anamx_AnMBR <- function(df, e_Base=e_Base_std){
 
   temp$E.AnMBR <- temp$Flowrate * e_AnMBR
   temp$E.CHP <- temp$CH4burn * e_cogen
-  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh + temp$LCH4 * CO2eq_CH4
+  temp$CO2 <- rowSums(select(temp, starts_with('E.'))) * kgCO2.kWh + temp$LCH4 * CO2eq_CH4 + temp$LN * N2O_AobAmx * CO2eq_N2O
 
   # Cost
   temp$cost <- temp$px.OUT * C_solids + temp$CH4burn * C_CH4_prod + temp$O2.TOT * C_O2 + 
