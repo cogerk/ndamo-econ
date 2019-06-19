@@ -54,7 +54,7 @@ rho_BG_dig <<- 0.86 # Density of biogas at STP kg/m3
 
 # Electrical Demand
 kgCO2.kWh <<- 0.47 # kgCO2/kWh
-e_Base_std <<- 93 #kWh/ML
+e_Base_std <<- 0 #kWh/ML
 e_Solids <<- 2.4 #kWh/kgVSS
 e_O2 <<- 1.5 #kWh/kgO2
 e_AnMBR <<- 190 #kWh/ML
@@ -98,15 +98,21 @@ scenarios <- function(Q, cNin, cCODin, e_Base=e_Base_std,
   #== Compare all theoretical scenarios to base case MLE if true
   if (compare) {
     #= Calculate Sludge Production/O2 Demand as fraction of MLE
-    df.B[, c(7:11)] <- (df.B[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
-    df.C[, c(7:11)] <- (df.C[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
-    df.D[, c(7:11)] <- (df.D[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
-    df.E[, c(7:11)] <- (df.E[, c(7:11)]-df.A[, c(7:11)])/abs(df.A[, c(7:11)])
+    df.B[, c(7:10)] <- (df.B[, c(7:10)]-df.A[, c(7:10)])/abs(df.A[, c(7:10)])
+    df.C[, c(7:10)] <- (df.C[, c(7:10)]-df.A[, c(7:10)])/abs(df.A[, c(7:10)])
+    df.D[, c(7:10)] <- (df.D[, c(7:10)]-df.A[, c(7:10)])/abs(df.A[, c(7:10)])
+    df.E[, c(7:10)] <- (df.E[, c(7:10)]-df.A[, c(7:10)])/abs(df.A[, c(7:10)])
+    
+    df.B$CO2.equivs <- -(df.A$CO2.equivs-df.B$CO2.equivs)
+    df.C$CO2.equivs <- -(df.A$CO2.equivs-df.C$CO2.equivs)
+    df.D$CO2.equivs <- -(df.A$CO2.equivs-df.D$CO2.equivs)
+    df.E$CO2.equivs <- -(df.A$CO2.equivs-df.E$CO2.equivs)
     
     df.B$cost <- -(df.A$cost-df.B$cost)
     df.C$cost <- -(df.A$cost-df.C$cost)
     df.D$cost <- -(df.A$cost-df.D$cost)
     df.E$cost <- -(df.A$cost-df.E$cost)
+    
     
   }
   
