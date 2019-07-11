@@ -4,18 +4,18 @@ require(ggplot2)
 require(grid)
 require(extrafont)
 
+# Setup the plot margins
+lw <- list(left.padding = list(x = -.33, units = "inches"))
+lw$right.padding <- list(x = -.23, units = "inches")
+lh <- list(bottom.padding = list(x = -.55, units = "inches"))
+lh$top.padding <- list(x = -.325, units = "inches")
+lattice.options(layout.widths = lw, layout.heights = lh)
+
 
 draw_graph <- function(CODmax, Nmax, font, result, select_var, max, min,
                        col.percent, col.bar.range, col.bar.range.lab, 
                        col.bar.range.lab.at, col.bar.lab, 
                        fig.no, graph.title) {
-  
-  # Setup the plot margins
-  lw <- list(left.padding = list(x = -.33, units = "inches"))
-  lw$right.padding <- list(x = -.23, units = "inches")
-  lh <- list(bottom.padding = list(x = -.55, units = "inches"))
-  lh$top.padding <- list(x = -.325, units = "inches")
-  lattice.options(layout.widths = lw, layout.heights = lh)
   
   # Setup labels
   ys <- list(at=seq(0,CODmax, by=50), labels=rep('', length(seq(0,CODmax, by=10))))
@@ -93,6 +93,46 @@ draw_graph <- function(CODmax, Nmax, font, result, select_var, max, min,
                             textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob(''), textGrob('') #Gaps
   ), layout_matrix = lay))
 
+}
+
+
+blank_graph <- function(CODmax, Nmax, font, result, graph.title) {
+  # Setup labels
+  ys <- list(at=seq(0,CODmax, by=50), labels=rep('', length(seq(0,CODmax, by=10))))
+  xs <- list(at=seq(0, Nmax, by=15), labels=rep('', length(seq(0, Nmax, by=15))))
+  gs <- list()
+  
+  # Axes
+  lab3 <- textGrob('Nitrogen in Influent, mg/L', gp=gpar(fontfamily=font, cex=0.9))
+  ax4 <- textGrob(seq(0, Nmax, by=15), x=seq(0, 1.02, length.out = 5), y=.25, just='right', gp=gpar(fontfamily=font, cex=0.9))
+  lab6 <- textGrob('COD in Influent, mg/L', rot=90, gp=gpar(fontfamily=font, cex=0.9), x=.75)
+  ax5 <- textGrob(seq(0,CODmax, by=50), y=seq(0, 1, length.out = 9), x=.75, just='right', gp=gpar(fontfamily=font, cex=0.9))
+  
+  
+  # Set up plot layout
+  lay <- as.matrix(read.csv(file = 'code/figures/blank_layout.csv', header=FALSE))
+  d <- select(result[[1]], Nitrogen, Carbon, Flowrate)
+  p <- levelplot(Flowrate/Flowrate ~ Nitrogen * Carbon, data=d,
+                      panel = function(...){
+                      panel.levelplot(...)
+                      panel.abline(v = seq(0,Nmax-1, by=15), alpha=0.5)
+                      panel.abline(h = seq(0,CODmax-1, by=50), alpha=0.5)
+                      },
+                      at=seq(0,2), col.regions=colorRampPalette(c('white', 'white')), 
+                      xlab="", ylab="",
+                      scales=list(cex=1, tck = c(1,0), 
+                                  x=xs,
+                                  y=ys))
+    p <- update(p, legend=NULL)
+  
+  lab1 <- textGrob(graph.title, gp=gpar(cex=1.25, fontfamily=font))
+  
+  return(grid.arrange(grobs = list(lab1, p, # Title and graph
+                                   lab3, ax4, # N axis and label
+                                   ax5, lab6, # C axix and label
+                                   textGrob(''), textGrob(''), textGrob('') #Gaps
+  ), layout_matrix = lay))
+  
 }
 
 

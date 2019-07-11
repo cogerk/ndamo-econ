@@ -25,8 +25,8 @@ col.percent <- colorRampPalette(c('darkred','red', 'white', 'blue', 'darkblue'))
 col.bar.range <- seq(-20000,20000, length=1000)
 col.bar.range.lab <- c('-$20000', '$10000', '$0', '$10000', '$20000')
 col.bar.range.lab.at <- seq(-20000,20000,length=5)
-col.bar.lab <- '$ Saved from Base Case (MLE)'
-graph.title <- 'Total Reduction in Primary Cost Factors from the Base Case (MLE)'
+col.bar.lab <- 'Cost saved per day compare to base case, USD/d'
+graph.title <- 'Reduction in Primary Cost Factors from the Base Case (MLE)'
 fig.no<-2
 ggsave('code/figures/Cost.png', plot = draw_graph(CODmax, Nmax, font, result, select_var='cost', max=Inf, min=-Inf,
            col.percent, col.bar.range, col.bar.range.lab, 
@@ -35,13 +35,13 @@ ggsave('code/figures/Cost.png', plot = draw_graph(CODmax, Nmax, font, result, se
 
 #= Plot GHG
 col.percent <- colorRampPalette(c('darkblue','blue', 'white', 'red', 'darkred'))
-col.bar.range <- seq(-5, 5, length=1000)
-col.bar.range.lab <- c('<-500%', '-100%', '0%', '100%', '>500%')
-col.bar.range.lab.at <- c(-5, -1, 0, 1, 5)
-col.bar.lab <- '% Difference from Base Case'
-graph.title <- 'GHG Production w/ respect to the Base Case (MLE)'
+col.bar.range <- seq(-100000, 100000, length=1000)
+col.bar.range.lab <- c('-100000', '-50000', '0', '50000', '100000')
+col.bar.range.lab.at <- c(-100000, -50000, 0, 50000, 100000)
+col.bar.lab <- 'GHG reduced per day compare to base case, kg equivalent CO2/d'
+graph.title <- 'Reduction in primary GHG emission sources from Base Case (MLE)'
 fig.no<-3
-ggsave('code/figures/GHG.png', draw_graph(CODmax, Nmax, font, result, select_var='CO2.equivs', max=5, min=-5,
+ggsave('code/figures/GHG.png', draw_graph(CODmax, Nmax, font, result, select_var='CO2.equivs', max=100000, min=-100000,
            col.percent, col.bar.range, col.bar.range.lab, 
            col.bar.range.lab.at, col.bar.lab, 
            fig.no, graph.title), width=width, height=height)
@@ -84,3 +84,10 @@ ggsave('code/figures/Methane Production.png', draw_graph(CODmax, Nmax, font, res
                            col.percent, col.bar.range, col.bar.range.lab, 
                            col.bar.range.lab.at, col.bar.lab, 
                            fig.no, graph.title), width=width, height=height)
+
+
+ggsave('code/figures/blank.png', 
+       blank_graph(CODmax, Nmax, font, result, 
+                   'Ideal Technology to Minimize Cost and GHGs'), width=5, height=5.1)
+
+
