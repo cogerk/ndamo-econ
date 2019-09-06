@@ -19,6 +19,40 @@ Q <- 60 # constant flow rate
 
 #== Run simultions
 result <- scenarios(Q,cNin,cCODin, compare=TRUE)
+result_perm3=list()
+for (i in 1:(length(result))) {
+  result_perm3[[i]] <- mutate(result[[i]], 
+                         cost=cost/(Flowrate*10^3),
+                         CO2.equivs=CO2.equivs/(Flowrate*10^3))
+  }
+
+
+#= Plot Cost per m3
+col.percent <- colorRampPalette(c('darkred','red', 'white', 'blue', 'darkblue'))
+col.bar.range <- seq(-.5,.5, length=1000)
+col.bar.range.lab <-c(expression('-$'~0.5/d/m^3), expression('-$'~0.25/d/m^3), expression('$'~0/d/m^3), expression('$'~0.25/d/m^3), expression('$'~0.5/d/m^3))
+col.bar.range.lab.at <- seq(-.5,.5,length=5)
+col.bar.lab <- bquote('Operational Cost saved compared to base case, USD/d/'~m^3)
+graph.title <- 'Overall Reduction in Operational Cost Factors from the Base Case (MLE)'
+fig.no<-2
+ggsave('code/figures/Cost_perm3.png', plot = draw_graph(CODmax, Nmax, font, result_perm3, select_var='cost', max=Inf, min=-Inf,
+           col.percent, col.bar.range, col.bar.range.lab, 
+           col.bar.range.lab.at, col.bar.lab, 
+           fig.no, graph.title), width=width, height=height)
+
+#= Plot GHG per m3
+col.percent <- colorRampPalette(c('darkblue','blue', 'white', 'red', 'darkred'))
+col.bar.range <- seq(-2, 2, length=1000)
+col.bar.range.lab <- c(expression('-2'~kg/d/m^3), expression('-1'~kg/d/m^3), expression('0'~kg/d/m^3), expression('1'~kg/d/m^3), expression('2'~kg/d/m^3))
+col.bar.range.lab.at <- c(-2, -1, 0, 1, 2)
+col.bar.lab <- bquote('GHG reduction compared to base case, kg equivalent '~CO[2]~'/d/'~m^3)
+graph.title <- 'Reduction in primary GHG emission sources from Base Case (MLE)'
+fig.no<-3
+ggsave('code/figures/GHG_perm3.png', draw_graph(CODmax, Nmax, font, result_perm3, select_var='CO2.equivs', max=100000, min=-100000,
+           col.percent, col.bar.range, col.bar.range.lab, 
+           col.bar.range.lab.at, col.bar.lab, 
+           fig.no, graph.title), width=width, height=height)
+
 
 #= Plot Cost
 col.percent <- colorRampPalette(c('darkred','red', 'white', 'blue', 'darkblue'))
@@ -29,9 +63,9 @@ col.bar.lab <- 'Cost saved per day compare to base case, USD/d'
 graph.title <- 'Reduction in Primary Cost Factors from the Base Case (MLE)'
 fig.no<-2
 ggsave('code/figures/Cost.png', plot = draw_graph(CODmax, Nmax, font, result, select_var='cost', max=Inf, min=-Inf,
-           col.percent, col.bar.range, col.bar.range.lab, 
-           col.bar.range.lab.at, col.bar.lab, 
-           fig.no, graph.title), width=width, height=height)
+                                                  col.percent, col.bar.range, col.bar.range.lab, 
+                                                  col.bar.range.lab.at, col.bar.lab, 
+                                                  fig.no, graph.title), width=width, height=height)
 
 #= Plot GHG
 col.percent <- colorRampPalette(c('darkblue','blue', 'white', 'red', 'darkred'))
@@ -42,9 +76,10 @@ col.bar.lab <- 'GHG reduced per day compare to base case, kg equivalent CO2/d'
 graph.title <- 'Reduction in primary GHG emission sources from Base Case (MLE)'
 fig.no<-3
 ggsave('code/figures/GHG.png', draw_graph(CODmax, Nmax, font, result, select_var='CO2.equivs', max=100000, min=-100000,
-           col.percent, col.bar.range, col.bar.range.lab, 
-           col.bar.range.lab.at, col.bar.lab, 
-           fig.no, graph.title), width=width, height=height)
+                                          col.percent, col.bar.range, col.bar.range.lab, 
+                                          col.bar.range.lab.at, col.bar.lab, 
+                                          fig.no, graph.title), width=width, height=height)
+
 
 #= Plot O2 Demand
 col.percent <- colorRampPalette(c('blue', 'white', 'red' ))

@@ -55,7 +55,7 @@ rho_BG_dig <<- 0.86 # Density of biogas at STP kg/m3
 # Electrical Demand
 kgCO2.kWh <<- 0.47 # kgCO2/kWh
 e_Base_std <<- 0 #kWh/ML
-e_Solids <<- 2.4 #kWh/kgVSS
+e_Solids <<- 2.24 #kWh/kgVSS
 e_O2 <<- 1.5 #kWh/kgO2
 e_AnMBR <<- 190 #kWh/ML
 e_Mix <<- 28 #kWh/ML
@@ -68,7 +68,7 @@ N2O_Nit_base <<- 0
 
 # Cost Factors
 C_electricity <- 0.078
-C_solids <<- -0.19
+C_solids <<- -0.23
 C_O2 <<- -e_O2 * C_electricity
 C_CH4_added <<- -0.03 # COD Basis
 C_CH3OH_added <<- -0.29 # COD Basis

@@ -25,8 +25,8 @@ draw_graph <- function(CODmax, Nmax, font, result, select_var, max, min,
   # Plot Titles
   lab1.name <- 'HRAS/anammox vs. MLE'
   lab2.name <- 'AnMBR/anammox vs. MLE'
-  lab3.name <- 'HRAS/anammox/n-damo vs. MLE'
-  lab4.name <- 'AnMBR/anammox/n-damo vs. MLE'
+  lab3.name <- 'HRAS/anammox/n-damo\nvs. MLE'
+  lab4.name <- 'AnMBR/anammox/n-damo\nvs. MLE'
   
   
   # Axes
