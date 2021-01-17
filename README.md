@@ -7,7 +7,7 @@ Publication Date:October 8, 2019
 https://doi.org/10.1021/acs.est.9b04764
 
 # Model Description
-The model is thoroughly described in the publication's supplementary material](SupplementalInformation.pdf)
+The model is thoroughly described in the publication's [supplementary material](SupplementalInformation.pdf)
 
 # Graphical Conclusion
 ![](GraphicalConclusion.png)
