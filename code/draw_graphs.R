@@ -4,6 +4,8 @@ require(ggplot2)
 require(grid)
 require(extrafont)
 
+par(family = 'serif')
+
 # Setup the plot margins
 lw <- list(left.padding = list(x = -.33, units = "inches"))
 lw$right.padding <- list(x = -.23, units = "inches")
@@ -65,7 +67,7 @@ draw_graph <- function(CODmax, Nmax, font, result, select_var, max, min,
     
     leg.list <- p[[i]]$legend$right$args$key
     leg13 <-  draw.colorkey(leg.list)
-    leg13$children[[4]]$children[[1]]$gp$fontfamily <- font
+    leg13$children[[6]]$children[[1]]$gp$fontfamily <- font
     p[[i]] <- update(p[[i]], legend=NULL)
   }
   

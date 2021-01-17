@@ -34,8 +34,8 @@ col.bar.range.lab <-c(expression('-$'~0.5/d/m^3), expression('-$'~0.25/d/m^3), e
 col.bar.range.lab.at <- seq(-.5,.5,length=5)
 col.bar.lab <- bquote('Operational Cost saved compared to base case, USD/d/'~m^3)
 graph.title <- 'Overall Reduction in Operational Cost Factors from the Base Case (MLE)'
-fig.no<-2
-ggsave('code/figures/Cost_perm3.png', plot = draw_graph(CODmax, Nmax, font, result_perm3, select_var='cost', max=Inf, min=-Inf,
+fig.no<-4
+ggsave('code/figures/Cost_perm3.pdf', plot = draw_graph(CODmax, Nmax, font, result_perm3, select_var='cost', max=Inf, min=-Inf,
            col.percent, col.bar.range, col.bar.range.lab, 
            col.bar.range.lab.at, col.bar.lab, 
            fig.no, graph.title), width=width, height=height)
@@ -48,7 +48,7 @@ col.bar.range.lab.at <- c(-2, -1, 0, 1, 2)
 col.bar.lab <- bquote('GHG reduction compared to base case, kg equivalent '~CO[2]~'/d/'~m^3)
 graph.title <- 'Reduction in primary GHG emission sources from Base Case (MLE)'
 fig.no<-3
-ggsave('code/figures/GHG_perm3.png', draw_graph(CODmax, Nmax, font, result_perm3, select_var='CO2.equivs', max=100000, min=-100000,
+ggsave('code/figures/GHG_perm3.pdf', draw_graph(CODmax, Nmax, font, result_perm3, select_var='CO2.equivs', max=100000, min=-100000,
            col.percent, col.bar.range, col.bar.range.lab, 
            col.bar.range.lab.at, col.bar.lab, 
            fig.no, graph.title), width=width, height=height)
