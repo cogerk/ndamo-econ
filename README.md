@@ -12,4 +12,4 @@ The model is thoroughly described in the publication's [supplementary material](
 # Graphical Conclusion
 ![](GraphicalConclusion.png)
 
-More detail about these conlcusions can be found within the [publication](Cogert 2019.pdf).
+More detail about these conlcusions can be found within the [publication](SupplementalInformation.pdf).
